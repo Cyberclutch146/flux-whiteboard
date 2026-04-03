@@ -125,7 +125,8 @@ export const useBoardStore = create<BoardStore>()(
       // History mapping
       pushHistory: () => {
         set((s) => {
-          const newPast = [...s.pastElements, s.elements];
+          // Limit history stack to 20 to prevent memory blowouts
+          const newPast = [...s.pastElements.slice(-19), s.elements];
           return {
             pastElements: newPast,
             futureElements: [],
@@ -165,7 +166,12 @@ export const useBoardStore = create<BoardStore>()(
     }),
     {
       name: "flux-board-storage",
-      partialize: (state) => ({ elements: state.elements, pastElements: state.pastElements, futureElements: state.futureElements, name: state.name }),
+      // Exclude pastElements and futureElements from localStorage to prevent QuotaExceededError
+      partialize: (state) => ({ 
+        elements: state.elements, 
+        name: state.name,
+        theme: state.theme
+      }),
     }
   )
 );
