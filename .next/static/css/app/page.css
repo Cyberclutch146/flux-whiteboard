@@ -17,3 +17,44 @@
   display: inline-block;
 }
 
+/*!*************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./components/RotatingText.css ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************/
+/* components/RotatingText.css */
+.text-rotate {
+  display: inline-flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.text-rotate-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.text-rotate-lines {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-rotate-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.text-rotate-element {
+  display: inline-block;
+}
+
+.text-rotate-space {
+  display: inline-block;
+  white-space: pre;
+}
+

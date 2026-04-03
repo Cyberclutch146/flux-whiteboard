@@ -7,7 +7,8 @@ export type ToolId =
   | "line"
   | "pencil"
   | "text"
-  | "hand";
+  | "hand"
+  | "eraser";
 
 export interface Tool {
   id: ToolId;
@@ -37,6 +38,7 @@ export interface BaseElement {
   label: string;
   points?: number[]; // For lines and paths
   text?: string;     // For text nodes
+  globalCompositeOperation?: string; // For eraser
 }
 
 export type WhiteboardElement = BaseElement;
@@ -59,8 +61,12 @@ export type ConnectionStatus = "connected" | "saving" | "saved" | "offline";
 export interface BoardState {
   name: string;
   selectedTool: ToolId;
+  currentColor: string;
+  currentWidth: number;
   selectedElementId: string | null;
   elements: WhiteboardElement[];
+  pastElements: WhiteboardElement[][];
+  futureElements: WhiteboardElement[][];
   collaborators: Collaborator[];
   zoom: number;
   panOffset: { x: number; y: number };
