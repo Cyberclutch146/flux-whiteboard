@@ -1,10 +1,11 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Users, FilePlus, LogOut, ArrowRight, X } from "lucide-react";
-import { useState } from "react";
+import { User, Users, FilePlus, LogOut, ArrowRight, X, Sun, Moon, Menu } from "lucide-react";
+import { useState, useRef } from "react";
 import VariableProximity from "./VariableProximity";
-import { useRef } from "react";
+import ShapeGrid from "./ShapeGrid";
+import { useBoardStore } from "@/store/board";
 
 interface DashboardProps {
   user: any;
@@ -18,6 +19,9 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
   const containerRef = useRef<HTMLDivElement>(null);
   const [showJoin, setShowJoin] = useState(false);
   const [joinCode, setJoinCode] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  
+  const { theme, toggleTheme } = useBoardStore();
 
   const handleJoinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,148 +31,193 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
   };
 
   return (
-    <div ref={containerRef} className="absolute inset-0 flex flex-col items-center justify-center bg-[var(--bg-primary)] p-6 z-40 transition-colors">
+    <div ref={containerRef} className="absolute inset-0 flex flex-col bg-[var(--bg-primary)] p-6 z-40 transition-colors">
       
-      {/* Top Right Profile Menu */}
-      <div className="absolute top-6 right-6 flex items-center gap-4 bg-[var(--bg-secondary)] px-4 py-2 rounded-full shadow-sm border border-[var(--border-secondary)]">
-        <div className="flex items-center gap-3">
-          {user?.photoURL ? (
-            <img src={user.photoURL} alt="Avatar" className="w-8 h-8 rounded-full border border-[var(--border-secondary)]" />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)]">
-              <User size={16} />
-            </div>
-          )}
-          <span className="text-sm font-medium text-[var(--text-primary)] hidden sm:block">
-            {user?.displayName || "Guest Writer"}
-          </span>
-        </div>
-        <div className="w-px h-6 bg-[var(--border-secondary)]" />
-        <button 
-          onClick={onSignOut}
-          className="text-[var(--text-secondary)] hover:text-[#e74c3c] transition-colors p-1"
-          title="Sign Out"
-        >
-          <LogOut size={16} />
-        </button>
-      </div>
-
-      {/* Main Logo */}
-      <div className="mb-16 text-[var(--text-primary)] text-6xl font-extrabold tracking-widest cursor-default">
-        {/* @ts-ignore */}
-        <VariableProximity
-          label="FLUX"
-          fromFontVariationSettings="'wght' 400"
-          toFontVariationSettings="'wght' 900"
-          containerRef={containerRef}
-          radius={150}
-          falloff="linear"
+      {/* Background ShapeGrid */}
+      <div className="absolute inset-0 z-0 overflow-hidden opacity-30 pointer-events-none">
+        <ShapeGrid 
+          speed={0.5}
+          squareSize={40}
+          direction='diagonal'
+          borderColor='var(--border-secondary)'
+          hoverFillColor='var(--bg-tertiary)'
+          shape='square'
+          hoverTrailAmount={2}
         />
       </div>
 
-      {/* Main Action Cards */}
-      <div className="flex flex-col sm:flex-row gap-6 w-full max-w-3xl justify-center items-stretch relative">
-        <AnimatePresence mode="wait">
-          {!showJoin ? (
-            <motion.div
-              key="buttons"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex flex-col sm:flex-row gap-6 w-full justify-center"
-            >
-              {/* Solo Card */}
-              <motion.button
-                whileHover={{ scale: 1.02, y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={onSolo}
-                className="flex-1 flex flex-col items-center justify-center gap-4 p-8 bg-[var(--bg-secondary)] border border-[var(--border-secondary)] shadow-sm hover:shadow-md rounded-2xl transition-all group"
-              >
-                <div className="w-16 h-16 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:scale-110 transition-transform">
-                  <User size={32} />
-                </div>
-                <div className="text-center">
-                  <h3 className="text-lg font-bold text-[var(--text-primary)]">Continue Solo</h3>
-                  <p className="text-sm text-[var(--text-muted)] mt-1">Local only, no sharing</p>
-                </div>
-              </motion.button>
+      {/* Top Header - Minimalist */}
+      <header className="relative z-50 flex justify-between items-center w-full max-w-6xl mx-auto pt-4">
+        {/* Empty left space to balance */}
+        <div className="w-8" />
+        
+        {/* Right Menu */}
+        <div className="relative">
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex items-center gap-3 px-4 py-2 hover:bg-[var(--bg-tertiary)] rounded-full transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          >
+            <span className="font-medium tracking-wide text-sm hidden sm:block">
+              {user?.displayName || "Guest"}
+            </span>
+            <Menu size={20} />
+          </button>
 
-              {/* Create Room Card */}
-              <motion.button
-                whileHover={{ scale: 1.02, y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={onCreateRoom}
-                className="flex-1 flex flex-col items-center justify-center gap-4 p-8 bg-[#1A1A1A] border border-[#333] shadow-lg hover:shadow-xl rounded-2xl transition-all group text-white relative overflow-hidden"
+          <AnimatePresence>
+            {menuOpen && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="absolute top-12 right-0 w-48 bg-[var(--bg-secondary)] border border-[var(--border-primary)] shadow-2xl rounded-xl p-2 flex flex-col gap-1 overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[rgba(255,255,255,0.05)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="w-16 h-16 rounded-full bg-[#333] flex items-center justify-center text-[#CCC] group-hover:text-white group-hover:scale-110 transition-transform relative z-10">
-                  <FilePlus size={32} />
-                </div>
-                <div className="text-center relative z-10">
-                  <h3 className="text-lg font-bold text-white">Create Room</h3>
-                  <p className="text-sm text-[#888] mt-1">Start a fresh multiplayer session</p>
-                </div>
-              </motion.button>
-
-              {/* Join Room Card */}
-              <motion.button
-                whileHover={{ scale: 1.02, y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setShowJoin(true)}
-                className="flex-1 flex flex-col items-center justify-center gap-4 p-8 bg-[var(--bg-secondary)] border border-[var(--border-secondary)] shadow-sm hover:shadow-md rounded-2xl transition-all group"
-              >
-                <div className="w-16 h-16 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:scale-110 transition-transform">
-                  <Users size={32} />
-                </div>
-                <div className="text-center">
-                  <h3 className="text-lg font-bold text-[var(--text-primary)]">Join Room</h3>
-                  <p className="text-sm text-[var(--text-muted)] mt-1">Enter a 7-digit code</p>
-                </div>
-              </motion.button>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="join-form"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md p-8 bg-[var(--bg-secondary)] border border-[var(--border-secondary)] shadow-lg rounded-2xl mx-auto"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-[var(--text-primary)]">Join a Room</h3>
                 <button 
-                  onClick={() => setShowJoin(false)}
-                  className="text-[var(--text-muted)] hover:text-[var(--text-primary)] bg-[var(--bg-tertiary)] p-1.5 rounded-full"
+                  onClick={toggleTheme}
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-[var(--bg-tertiary)] text-sm font-medium text-[var(--text-primary)] transition-colors"
                 >
-                  <X size={16} />
+                  <span className="flex items-center gap-2">
+                    {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+                    Theme
+                  </span>
+                  <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">{theme}</span>
                 </button>
-              </div>
-
-              <form onSubmit={handleJoinSubmit} className="flex flex-col gap-4">
-                <div className="relative">
-                  <input
-                    type="text"
-                    maxLength={7}
-                    value={joinCode}
-                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                    placeholder="7-Digit Code (e.g. A4B9Q2Z)"
-                    className="w-full px-4 py-4 text-center text-2xl font-mono font-bold tracking-widest bg-[var(--bg-primary)] border-2 border-[var(--border-primary)] rounded-xl focus:border-[var(--text-primary)] focus:outline-none text-[var(--text-primary)] placeholder-[var(--text-muted)] uppercase transition-colors"
-                    autoFocus
-                  />
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={joinCode.trim().length !== 7}
-                  className="w-full py-4 bg-[#1A1A1A] text-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 hover:shadow-lg transition-all"
+                <div className="w-full h-px bg-[var(--border-secondary)] my-1" />
+                <button 
+                  onClick={onSignOut}
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-[#e74c3c]/10 text-sm font-medium text-[#e74c3c] transition-colors"
                 >
-                  Join Session <ArrowRight size={18} />
-                </motion.button>
-              </form>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                  <span className="flex items-center gap-2">
+                    <LogOut size={16} />
+                    Sign Out
+                  </span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-xl mx-auto">
+        {/* Main Logo */}
+        <div className="mb-20 text-[var(--text-primary)] text-6xl md:text-8xl font-extrabold tracking-[0.2em] cursor-default text-center">
+          {/* @ts-ignore */}
+          <VariableProximity
+            label="FLUX"
+            fromFontVariationSettings="'wght' 400"
+            toFontVariationSettings="'wght' 900"
+            containerRef={containerRef}
+            radius={180}
+            falloff="linear"
+          />
+        </div>
+
+        {/* Linear Action List */}
+        <div className="w-full px-4">
+          <AnimatePresence mode="wait">
+            {!showJoin ? (
+              <motion.div
+                key="list"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="flex flex-col gap-3 w-full"
+              >
+                <button
+                  onClick={onSolo}
+                  className="group flex items-center justify-between w-full p-4 rounded-xl border border-[var(--border-primary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:scale-105 transition-all">
+                      <User size={20} />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)]">Continue Solo</h3>
+                      <p className="text-xs text-[var(--text-muted)] font-mono uppercase tracking-widest mt-0.5">Local Environment</p>
+                    </div>
+                  </div>
+                  <ArrowRight size={20} className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors group-hover:translate-x-1" />
+                </button>
+
+                <button
+                  onClick={onCreateRoom}
+                  className="group flex items-center justify-between w-full p-4 rounded-xl border border-[var(--border-primary)] bg-[#111] hover:bg-black transition-all shadow-md relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.05)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="w-10 h-10 rounded-lg bg-[#222] flex items-center justify-center text-white group-hover:scale-105 transition-all">
+                      <FilePlus size={20} />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-lg font-semibold text-white">Create Room</h3>
+                      <p className="text-xs text-gray-400 font-mono uppercase tracking-widest mt-0.5">Multiplayer Cloud</p>
+                    </div>
+                  </div>
+                  <ArrowRight size={20} className="text-gray-400 group-hover:text-white transition-colors group-hover:translate-x-1 relative z-10" />
+                </button>
+
+                <button
+                  onClick={() => setShowJoin(true)}
+                  className="group flex items-center justify-between w-full p-4 rounded-xl border border-[var(--border-primary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:scale-105 transition-all">
+                      <Users size={20} />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)]">Join Room</h3>
+                      <p className="text-xs text-[var(--text-muted)] font-mono uppercase tracking-widest mt-0.5">By Invite Code</p>
+                    </div>
+                  </div>
+                  <ArrowRight size={20} className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors group-hover:translate-x-1" />
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="join-form"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full flex justify-center"
+              >
+                <div className="w-full p-6 bg-[var(--bg-primary)] border border-[var(--border-primary)] shadow-2xl rounded-2xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+                      <Users size={20} /> Join Session
+                    </h3>
+                    <button 
+                      onClick={() => setShowJoin(false)}
+                      className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors hover:rotate-90"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleJoinSubmit} className="flex flex-col gap-4">
+                    <input
+                      type="text"
+                      maxLength={7}
+                      value={joinCode}
+                      onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                      placeholder="ENTER CODE"
+                      className="w-full px-4 py-4 text-center text-3xl font-mono font-bold tracking-[0.2em] bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-xl focus:border-[var(--text-primary)] focus:bg-[var(--bg-primary)] focus:outline-none text-[var(--text-primary)] placeholder-[var(--text-muted)] uppercase transition-all"
+                      autoFocus
+                    />
+                    <motion.button
+                      whileHover={{ scale: joinCode.trim().length === 7 ? 1.02 : 1 }}
+                      whileTap={{ scale: joinCode.trim().length === 7 ? 0.98 : 1 }}
+                      type="submit"
+                      disabled={joinCode.trim().length !== 7}
+                      className="w-full py-4 bg-[#111] text-white font-bold tracking-widest text-sm rounded-xl disabled:opacity-30 disabled:cursor-not-allowed flex justify-center items-center gap-3 hover:shadow-lg transition-all"
+                    >
+                      CONNECT <ArrowRight size={18} />
+                    </motion.button>
+                  </form>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

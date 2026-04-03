@@ -4,10 +4,11 @@ import {
   FileImage, FolderOpen, Save, FileDown,
   Undo2, Redo2,
   MousePointer2, Pencil, Minus, Square, Circle, Type,
-  X, Plus, Eraser, Trash2, Sun, Moon, Home, LogOut, User
+  X, Plus, Eraser, Trash2, Sun, Moon, Home, LogOut, User, Copy, Check
 } from "lucide-react";
 import { useBoardStore } from "@/store/board";
 import clsx from "clsx";
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 function ToolBtn({ icon: Icon, active, onClick, title, color = "text-[var(--text-secondary)]", activeColor = "text-[var(--inverted-text)] bg-[var(--inverted-bg)]" }: any) {
@@ -34,6 +35,7 @@ function Sep() {
 }
 
 export default function TopBar({ roomId, user, onBackToHome, onSignOut }: { roomId: string | null; user: any; onBackToHome: () => void; onSignOut: () => void }) {
+  const [copied, setCopied] = useState(false);
   const { 
     selectedTool, setSelectedTool,
     undo, redo, historyIndex, historyLength,
@@ -42,6 +44,14 @@ export default function TopBar({ roomId, user, onBackToHome, onSignOut }: { room
     clearBoard,
     theme, toggleTheme
   } = useBoardStore();
+
+  const handleCopyRoom = () => {
+    if (roomId) {
+      navigator.clipboard.writeText(roomId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < historyLength;
@@ -55,8 +65,19 @@ export default function TopBar({ roomId, user, onBackToHome, onSignOut }: { room
             <Home size={16} /> <span className="text-sm font-medium">Home</span>
           </button>
           
-          <div className="flex items-center h-full px-4 text-[var(--text-primary)] text-[13px] font-medium border-l border-[var(--border-secondary)] ml-2">
-            <span>{roomId ? `Room: ${roomId}` : "Solo Session"}</span>
+          <div className="flex items-center h-full text-[var(--text-primary)] text-[13px] font-medium border-l border-[var(--border-secondary)] ml-2">
+            {roomId ? (
+              <button 
+                onClick={handleCopyRoom}
+                className="flex items-center gap-2 px-4 hover:bg-[var(--bg-secondary)] h-full transition-colors group"
+                title="Copy Room ID"
+              >
+                Room: <span className="font-mono font-bold tracking-wider">{roomId}</span>
+                {copied ? <Check size={14} className="text-[#2ecc71]" /> : <Copy size={14} className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors" />}
+              </button>
+            ) : (
+              <span className="px-4 text-[var(--text-muted)]">Solo Session</span>
+            )}
           </div>
         </div>
         
