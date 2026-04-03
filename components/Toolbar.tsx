@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MousePointer2, Square, Circle, Minus,
-  Pencil, Type, Hand,
+  Pencil, Type, Hand, Eraser,
 } from "lucide-react";
 import { useBoardStore } from "@/store/board";
 import type { Tool, ToolId } from "@/types";
@@ -29,6 +29,7 @@ const ICONS: Record<ToolId, React.ReactNode> = {
   line:   <Minus         size={16} strokeWidth={1.6} />,
   pencil: <Pencil        size={16} strokeWidth={1.6} />,
   text:   <Type          size={16} strokeWidth={1.6} />,
+  eraser: <Eraser        size={16} strokeWidth={1.6} />,
 };
 
 // Group separators: render a divider before each new group
