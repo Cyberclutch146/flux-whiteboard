@@ -76,7 +76,7 @@ export default function Notebook({ user, roomId }: NotebookProps) {
     "header",
     "bold", "italic", "underline", "strike",
     "color", "background",
-    "list", "bullet",
+    "list",
   ];
 
   return (

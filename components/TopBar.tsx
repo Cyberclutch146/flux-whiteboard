@@ -95,8 +95,8 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
         </div>
         
         <div className="ml-auto px-4 flex items-center gap-4">
-          <button onClick={toggleTheme} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors p-2" title="Toggle Theme">
-            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+          <button onClick={toggleTheme} className="text-[var(--text-primary)] hover:scale-110 hover:text-blue-500 transition-all ml-1 mr-3" title="Toggle Theme">
+            {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
           </button>
           
           <div className="w-px h-6 bg-[var(--border-secondary)]" />

@@ -74,14 +74,12 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       {/* Top Header - Micro-Interaction Profile */}
       <header className="absolute top-0 right-0 z-50 p-6 lg:p-10 pointer-events-none flex items-center justify-end gap-3">
         
-        {/* Theme Toggle Button (Standalone) */}
+        {/* Theme Toggle Button (Standalone, No Circle) */}
         <button 
           onClick={toggleTheme}
-          className="relative w-12 h-12 rounded-full bg-[var(--bg-primary)]/80 backdrop-blur-md border border-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] pointer-events-auto transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+          className="text-[var(--text-primary)] hover:scale-110 pointer-events-auto transition-all p-2 drop-shadow-lg"
         >
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            {theme === 'light' ? <Moon size={20} className="ml-[1px]" /> : <Sun size={20} className="ml-[1px]" />}
-          </div>
+          {theme === 'light' ? <Moon size={32} /> : <Sun size={32} />}
         </button>
 
         <div className="relative group pointer-events-auto">
@@ -168,24 +166,24 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                     onClick={() => setLocalMode('notebook')}
                     className={`flex-1 relative overflow-hidden flex flex-col items-center justify-center gap-2 p-6 rounded-[2rem] transition-all duration-300 border-2 ${
                       localMode === 'notebook' 
-                        ? 'bg-blue-500/10 border-blue-500/50 shadow-inner' 
+                        ? 'bg-orange-500/10 border-orange-500/50 shadow-inner' 
                         : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/10 dark:hover:border-white/10'
                     }`}
                   >
-                    <svg className={localMode === 'notebook' ? 'text-blue-500' : 'text-gray-400'} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
-                    <span className={`text-sm font-bold tracking-wide ${localMode === 'notebook' ? 'text-blue-600 dark:text-blue-400 drop-shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}>Notebook</span>
+                    <svg className={localMode === 'notebook' ? 'text-orange-500' : 'text-gray-400'} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
+                    <span className={`text-sm font-bold tracking-wide ${localMode === 'notebook' ? 'text-orange-600 dark:text-orange-400 drop-shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}>Notebook</span>
                   </button>
 
                   <button
                     onClick={() => setLocalMode('board')}
                     className={`flex-1 relative overflow-hidden flex flex-col items-center justify-center gap-2 p-6 rounded-[2rem] transition-all duration-300 border-2 ${
                       localMode === 'board' 
-                        ? 'bg-orange-500/10 border-orange-500/50 shadow-inner' 
+                        ? 'bg-teal-500/10 border-teal-500/50 shadow-inner' 
                         : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/10 dark:hover:border-white/10'
                     }`}
                   >
-                    <svg className={localMode === 'board' ? 'text-orange-500' : 'text-gray-400'} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
-                    <span className={`text-sm font-bold tracking-wide ${localMode === 'board' ? 'text-orange-600 dark:text-orange-400 drop-shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}>Whiteboard</span>
+                    <svg className={localMode === 'board' ? 'text-teal-500' : 'text-gray-400'} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
+                    <span className={`text-sm font-bold tracking-wide ${localMode === 'board' ? 'text-teal-600 dark:text-teal-400 drop-shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}>Whiteboard</span>
                   </button>
                 </div>
 
@@ -210,8 +208,8 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                   onClick={() => handleSelectMode(localMode)}
                   className={`mt-4 px-12 py-5 rounded-full font-black text-lg tracking-wide uppercase transition-all duration-500 shadow-xl border ${
                     localMode === 'notebook' 
-                    ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/30 border-blue-500' 
-                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/30 border-emerald-500'
+                    ? 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-500/30 border-orange-500' 
+                    : 'bg-teal-600 hover:bg-teal-500 text-white shadow-teal-500/30 border-teal-500'
                   }`}
                 >
                   Enter Workspace
@@ -235,15 +233,15 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
 
                 <button
                   onClick={onSolo}
-                  className="group flex items-center justify-between w-full p-4 rounded-2xl border border-[var(--border-secondary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
+                  className="group flex items-center justify-between w-full py-4 px-5 rounded-2xl border border-[var(--border-secondary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
                 >
                   <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                    <div className="w-12 h-12 shrink-0 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
                       <User size={20} className="group-hover:scale-110 transition-transform"/>
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-lg font-bold text-[var(--text-primary)]">Solo Local</h3>
-                      <p className="text-[11px] text-[var(--text-muted)] font-mono uppercase tracking-widest mt-1">Private Env</p>
+                    <div className="flex flex-col items-start justify-center text-left">
+                      <h3 className="text-[17px] font-bold text-[var(--text-primary)] leading-none mb-1.5 tracking-tight">Solo Local</h3>
+                      <p className="text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-[0.2em] leading-none">Private Env</p>
                     </div>
                   </div>
                   <ArrowRight size={20} className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-x-1" />
@@ -251,31 +249,31 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
 
                 <button
                   onClick={onCreateRoom}
-                  className="group flex items-center justify-between w-full p-4 rounded-2xl border border-[var(--border-primary)] bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-xl shadow-blue-500/20"
+                  className="group flex items-center justify-between w-full py-4 px-5 rounded-2xl border border-[var(--border-primary)] bg-orange-600 hover:bg-orange-500 text-white transition-all shadow-xl shadow-orange-500/20"
                 >
                   <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 rounded-xl bg-blue-700/50 flex items-center justify-center text-white">
+                    <div className="w-12 h-12 shrink-0 rounded-xl bg-orange-700/50 flex items-center justify-center text-white">
                       <FilePlus size={20} className="group-hover:scale-110 transition-transform"/>
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-lg font-bold text-white">Create Room</h3>
-                      <p className="text-[11px] text-blue-200 font-mono uppercase tracking-widest mt-1">Multiplayer Node</p>
+                    <div className="flex flex-col items-start justify-center text-left">
+                      <h3 className="text-[17px] font-bold text-white leading-none mb-1.5 tracking-tight">Create Room</h3>
+                      <p className="text-[10px] text-orange-200 font-mono uppercase tracking-[0.2em] leading-none">Multiplayer Node</p>
                     </div>
                   </div>
-                  <ArrowRight size={20} className="text-blue-200 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-x-1" />
+                  <ArrowRight size={20} className="text-orange-200 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-x-1" />
                 </button>
 
                 <button
                   onClick={() => setShowJoin(true)}
-                  className="group flex items-center justify-between w-full p-4 rounded-2xl border border-[var(--border-secondary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
+                  className="group flex items-center justify-between w-full py-4 px-5 rounded-2xl border border-[var(--border-secondary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
                 >
                   <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                    <div className="w-12 h-12 shrink-0 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
                       <Users size={20} className="group-hover:scale-110 transition-transform"/>
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-lg font-bold text-[var(--text-primary)]">Join Session</h3>
-                      <p className="text-[11px] text-[var(--text-muted)] font-mono uppercase tracking-widest mt-1">via Code</p>
+                    <div className="flex flex-col items-start justify-center text-left">
+                      <h3 className="text-[17px] font-bold text-[var(--text-primary)] leading-none mb-1.5 tracking-tight">Join Session</h3>
+                      <p className="text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-[0.2em] leading-none">Via Code</p>
                     </div>
                   </div>
                   <ArrowRight size={20} className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-x-1" />
