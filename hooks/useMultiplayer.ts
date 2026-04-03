@@ -45,15 +45,34 @@ export function useMultiplayer(roomId: string | null, userId: string | null, use
       const myCursorRef = ref(database, `rooms/${roomId}/cursors/${userId}`);
       onDisconnect(myCursorRef).remove();
       
+      let lastCall = 0;
+      
       const handleMouseMove = (e: MouseEvent) => {
+        const now = Date.now();
+        if (now - lastCall < 32) return; // limit to ~30fps
+        lastCall = now;
         const worldX = (e.clientX - panOffset.x) / (zoom / 100);
         const worldY = (e.clientY - panOffset.y) / (zoom / 100);
         set(myCursorRef, { x: worldX, y: worldY, name: userName });
       };
       
+      const handleTouchMove = (e: TouchEvent) => {
+        const now = Date.now();
+        if (now - lastCall < 32) return;
+        lastCall = now;
+        const touch = e.touches[0];
+        if (!touch) return;
+        const worldX = (touch.clientX - panOffset.x) / (zoom / 100);
+        const worldY = (touch.clientY - panOffset.y) / (zoom / 100);
+        set(myCursorRef, { x: worldX, y: worldY, name: userName });
+      };
+      
       window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('touchmove', handleTouchMove, { passive: true });
+      
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('touchmove', handleTouchMove);
         remove(myCursorRef);
       };
     }
