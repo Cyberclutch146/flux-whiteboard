@@ -50,7 +50,7 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
   };
 
   return (
-    <div ref={containerRef} className="absolute inset-0 flex flex-col bg-[var(--bg-primary)] z-40 transition-colors overflow-hidden">
+    <div ref={containerRef} className="absolute inset-0 flex flex-col bg-[var(--bg-primary)] z-40 transition-colors overflow-y-auto overflow-x-hidden no-scrollbar pb-4 md:pb-0">
       <Noise 
         patternSize={250}
         patternScaleX={2}
@@ -127,7 +127,7 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       </header>
 
       {/* Asymmetrical Main Layout */}
-      <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-32 w-full max-w-[1400px] mx-auto px-8 lg:px-16 overflow-y-auto no-scrollbar pb-24">
+      <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-32 w-full max-w-[1400px] mx-auto px-8 lg:px-16 pb-12 pt-32 lg:pt-0">
         
         {/* Left Col: Expressive Typography Hero */}
         <div className="flex-1 flex flex-col items-start justify-center min-w-[300px] pt-12 lg:pt-0">
@@ -399,7 +399,7 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       </AnimatePresence>
 
       {/* Elegant Footer glass panel */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-6 bg-[var(--bg-secondary)]/95 backdrop-blur-2xl border-t border-[var(--border-secondary)] md:bg-transparent md:border-none md:backdrop-blur-none md:absolute md:bottom-6 md:p-0 md:px-8 lg:px-16 pointer-events-none drop-shadow-2xl md:drop-shadow-xl rounded-t-3xl md:rounded-none">
+      <footer className="relative mt-8 md:mt-0 w-full z-50 p-6 pb-8 bg-transparent border-none md:fixed md:bottom-6 md:left-0 md:right-0 md:p-0 md:px-8 lg:px-16 pointer-events-none">
         <div className="flex flex-col md:flex-row justify-center md:justify-between items-center w-full max-w-[1400px] mx-auto gap-3 md:gap-4 relative">
           <div 
             onClick={() => setShowConnectPanel(true)}

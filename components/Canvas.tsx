@@ -284,14 +284,15 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
   const scale = zoom / 100;
   
   // Dynamic background grid using CSS vars
-  const gridBackgroundStyle = {
+  const gridBackgroundStyle: React.CSSProperties = {
     backgroundImage: `
       linear-gradient(var(--grid-line) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)
     `,
     backgroundSize: `${40 * scale}px ${40 * scale}px`,
     backgroundPosition: `${panOffset.x}px ${panOffset.y}px`,
-    backgroundColor: 'var(--bg-primary)'
+    backgroundColor: 'var(--bg-primary)',
+    touchAction: 'none'
   };
 
   const renderElement = (el: WhiteboardElement) => {
@@ -334,6 +335,9 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
+        onTouchStart={handlePointerDown}
+        onTouchMove={handlePointerMove}
+        onTouchEnd={handlePointerUp}
         ref={stageRef}
       >
         <Layer x={panOffset.x} y={panOffset.y} scaleX={scale} scaleY={scale}>
