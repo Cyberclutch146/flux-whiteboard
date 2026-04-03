@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { Stage, Layer, Rect, Circle, Line, Text } from "react-konva";
+import { Stage, Layer, Rect, Circle, Line, Text, Image as KonvaImage } from "react-konva";
+import useImage from "use-image";
 import { useBoardStore } from "@/store/board";
 import { v4 as uuidv4 } from "uuid";
 import type { ElementType, WhiteboardElement } from "@/types";
+import { useMultiplayer } from "@/hooks/useMultiplayer";
 
-export default function Canvas() {
+export default function Canvas({ user }: { user: any }) {
   const {
     elements,
     addElement,
@@ -37,6 +39,20 @@ export default function Canvas() {
 
   // Text Editing State
   const [editingText, setEditingText] = useState<{ id: string, x: number, y: number, text: string } | null>(null);
+
+  // Multiplayer Hook
+  const [roomId, setRoomId] = useState<string | null>(null);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    let rid = params.get("roomId");
+    if (!rid) {
+      rid = uuidv4().substring(0, 8);
+      window.history.replaceState(null, "", `?roomId=${rid}`);
+    }
+    setRoomId(rid);
+  }, []);
+
+  const { emitElement, otherCursors, emitClear } = useMultiplayer(roomId, user?.uid || null, user?.displayName || "Guest");
 
   useEffect(() => {
     const checkSize = () => {
@@ -74,7 +90,7 @@ export default function Canvas() {
     };
   }, [zoom, panOffset, selectedTool, setZoom, setPanOffset]);
 
-  // Window listener for exporting (dirty hack but works cleanly for Vercel/Next client)
+  // Window listener for exporting
   useEffect(() => {
     const handleExport = (e: any) => {
       if (!stageRef.current) return;
@@ -98,15 +114,44 @@ export default function Canvas() {
     return () => window.removeEventListener('export-board', handleExport);
   }, []);
 
+  // Window listener for importing images
+  useEffect(() => {
+    const handleImportImage = (e: any) => {
+      const dataUrl = e.detail;
+      const el: WhiteboardElement = {
+        id: uuidv4(), type: "image" as any, x: Math.random() * 100 - panOffset.x, y: Math.random() * 100 - panOffset.y, width: 300, height: 300, rotation: 0,
+        opacity: 100, fill: "transparent", stroke: "transparent", strokeWidth: 0, locked: false,
+        visible: true, label: "Image", text: dataUrl 
+      };
+      addElement(el);
+      emitElement(el);
+      pushHistory();
+    };
+    window.addEventListener('import-image', handleImportImage);
+    
+    const handleClear = () => {
+      useBoardStore.getState().clearBoard();
+      emitClear();
+    };
+    window.addEventListener('clear-board', handleClear);
+
+    return () => {
+      window.removeEventListener('import-image', handleImportImage);
+      window.removeEventListener('clear-board', handleClear);
+    };
+  }, [addElement, panOffset, pushHistory, emitElement, emitClear]);
+
   const handlePointerDown = (e: any) => {
     // If we're editing text and click away, commit it.
     if (editingText) {
       if (editingText.text.trim()) {
-        addElement({
+        const el: WhiteboardElement = {
           id: editingText.id, type: "text", x: editingText.x, y: editingText.y, width: 200, height: 50, rotation: 0,
           opacity: 100, fill: currentColor, stroke: "transparent", strokeWidth: 0, locked: false,
           visible: true, label: "Text", text: editingText.text
-        });
+        };
+        addElement(el);
+        emitElement(el);
         pushHistory();
       }
       setEditingText(null);
@@ -196,41 +241,28 @@ export default function Canvas() {
     isPanning.current = false;
     if (isDrawing.current && currentLine) {
       addElement(currentLine);
+      emitElement(currentLine);
       setCurrentLine(null);
       pushHistory();
     }
     isDrawing.current = false;
   };
 
+  // --- EARLY RETURN MUST HAPPEN AFTER ALL HOOKS ---
   if (dimensions.width === 0) return <div ref={containerRef} className="w-full h-full" />;
 
   const scale = zoom / 100;
   
-  // Light mode background grid
+  // Dynamic background grid using CSS vars
   const gridBackgroundStyle = {
     backgroundImage: `
-      linear-gradient(rgba(229,224,216,0.5) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(229,224,216,0.5) 1px, transparent 1px)
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)
     `,
     backgroundSize: `${40 * scale}px ${40 * scale}px`,
     backgroundPosition: `${panOffset.x}px ${panOffset.y}px`,
-    backgroundColor: '#FCFCFA'
+    backgroundColor: 'var(--bg-primary)'
   };
-
-  // Window listener for importing images
-  useEffect(() => {
-    const handleImportImage = (e: any) => {
-      const dataUrl = e.detail;
-      addElement({
-        id: uuidv4(), type: "image" as any, x: Math.random() * 100 - panOffset.x, y: Math.random() * 100 - panOffset.y, width: 300, height: 300, rotation: 0,
-        opacity: 100, fill: "transparent", stroke: "transparent", strokeWidth: 0, locked: false,
-        visible: true, label: "Image", text: dataUrl // store data URL in text temporarily or create new 'src' field, let's use text
-      });
-      pushHistory();
-    };
-    window.addEventListener('import-image', handleImportImage);
-    return () => window.removeEventListener('import-image', handleImportImage);
-  }, [addElement, panOffset, pushHistory]);
 
   const renderElement = (el: WhiteboardElement) => {
     const isSelected = selectedElementId === el.id;
@@ -251,9 +283,6 @@ export default function Canvas() {
         return <Text key={el.id} x={el.x} y={el.y} text={el.text || ""} fontSize={24} fill={f} globalCompositeOperation={gco as any} {...shadow} />;
       // @ts-ignore
       case "image":
-        // For actual image node, we'd need to use the useImage hook. We'll render a placeholder text or use standard Image if we load it.
-        // Let's create an img element dynamically to get the konva Image working
-        // But react-konva requires an HTMLImageElement object.
         return <AsyncImage key={el.id} el={el} isSelected={isSelected} />;
       default:
         return null;
@@ -283,6 +312,14 @@ export default function Canvas() {
             return <React.Fragment key={el.id}>{renderElement(el)}</React.Fragment>;
           })}
           {currentLine && renderElement(currentLine)}
+          
+          {/* Render Other Users' Cursors */}
+          {Object.entries(otherCursors).map(([uid, cursor]) => (
+            <React.Fragment key={uid}>
+              <Circle x={cursor.x} y={cursor.y} radius={4} fill="#e74c3c" />
+              <Text x={cursor.x + 8} y={cursor.y + 8} text={cursor.name} fontSize={12} fill="#e74c3c" />
+            </React.Fragment>
+          ))}
         </Layer>
       </Stage>
 
@@ -316,9 +353,6 @@ export default function Canvas() {
 }
 
 // Helper to render Konva Image from data URL
-import { Image as KonvaImage } from 'react-konva';
-import useImage from 'use-image';
-
 function AsyncImage({ el, isSelected }: { el: WhiteboardElement, isSelected: boolean }) {
   const [image] = useImage(el.text || '');
   const shadow = isSelected ? { shadowColor: '#3498db', shadowBlur: 10, shadowOpacity: 0.3 } : {};

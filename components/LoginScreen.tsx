@@ -31,13 +31,15 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
           />
         </div>
         
-        <button
+        <motion.button
           onClick={onLogin}
-          className="flex items-center gap-3 px-6 py-3 bg-white border border-[#e5e0d8] shadow-sm rounded-lg hover:bg-[#f9f8f6] hover:shadow transition-all text-[#333] font-medium"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center gap-3 px-8 py-4 bg-[#1A1A1A] text-white shadow-lg rounded-full hover:shadow-xl transition-shadow font-medium tracking-wide"
         >
-          <LogIn size={20} className="text-[#888]" />
-          Continue with Google
-        </button>
+          <LogIn size={20} className="text-[#CCC]" />
+          Sign in with Google
+        </motion.button>
       </div>
     </motion.div>
   );

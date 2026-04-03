@@ -10,6 +10,7 @@ import LoadingScreen from "./LoadingScreen";
 import LoginScreen   from "./LoginScreen";
 import { auth, googleProvider, signInWithPopup } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { useBoardStore } from "@/store/board";
 
 export default function WhiteboardApp() {
   useKeyboardShortcuts();
@@ -37,12 +38,14 @@ export default function WhiteboardApp() {
     }
   };
 
+  const { theme } = useBoardStore();
+
   const showLoader = !loaded;
   const showLogin = loaded && authInitialized && !user;
   const showApp = loaded && authInitialized && user;
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#FCFCFA] select-none flex flex-col">
+    <div className={`relative w-full h-screen overflow-hidden bg-white select-none flex flex-col ${theme}`}>
       <AnimatePresence>
         {showLoader && <LoadingScreen key="loader" onDone={() => setLoaded(true)} />}
         {showLogin && <LoginScreen key="login" onLogin={handleLogin} />}
@@ -55,7 +58,7 @@ export default function WhiteboardApp() {
 
           {/* Main Canvas Area */}
           <div className="relative flex-1 overflow-hidden">
-            <Canvas />
+            <Canvas user={user} />
           </div>
 
           {/* Minimal status bar */}

@@ -33,6 +33,9 @@ interface BoardStore extends BoardState {
   pushHistory: () => void;
   undo: () => void;
   redo: () => void;
+  
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
 }
 
 export const useBoardStore = create<BoardStore>()(
@@ -54,6 +57,8 @@ export const useBoardStore = create<BoardStore>()(
       isGridVisible: true,
       historyIndex: 0,
       historyLength: 0,
+      theme: 'light',
+      toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
 
       setBoardName: (name) => set({ name }),
       setConnectionStatus: (connectionStatus) => set({ connectionStatus }),

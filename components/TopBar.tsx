@@ -4,30 +4,33 @@ import {
   FileImage, FolderOpen, Save, FileDown,
   Undo2, Redo2,
   MousePointer2, Pencil, Minus, Square, Circle, Type,
-  X, Plus, Eraser, Trash2
+  X, Plus, Eraser, Trash2, Sun, Moon
 } from "lucide-react";
 import { useBoardStore } from "@/store/board";
 import clsx from "clsx";
+import { motion } from "framer-motion";
 
-function ToolBtn({ icon: Icon, active, onClick, title, color = "text-[#666]", activeColor = "text-white bg-[#333]" }: any) {
+function ToolBtn({ icon: Icon, active, onClick, title, color = "text-[var(--text-secondary)]", activeColor = "text-[var(--inverted-text)] bg-[var(--inverted-bg)]" }: any) {
   return (
-    <button
+    <motion.button
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
       onClick={onClick}
       title={title}
       className={clsx(
-        "w-8 h-8 flex items-center justify-center rounded-md transition-colors shrink-0",
+        "w-10 h-10 flex items-center justify-center rounded-lg transition-colors shrink-0",
         active 
           ? activeColor
-          : `${color} hover:bg-[#eae5df] hover:text-[#333]`
+          : `${color} hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]`
       )}
     >
-      <Icon size={16} />
-    </button>
+      <Icon size={18} />
+    </motion.button>
   );
 }
 
 function Sep() {
-  return <div className="w-px h-6 bg-[#dcd7d0] mx-2 shrink-0" />;
+  return <div className="w-px h-8 bg-[var(--border-secondary)] mx-3 shrink-0" />;
 }
 
 export default function TopBar() {
@@ -36,35 +39,42 @@ export default function TopBar() {
     undo, redo, historyIndex, historyLength,
     currentColor, setCurrentColor,
     currentWidth, setCurrentWidth,
-    clearBoard
+    clearBoard,
+    theme, toggleTheme
   } = useBoardStore();
 
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < historyLength;
 
   return (
-    <header className="flex-shrink-0 w-full bg-[#f4f0ea] border-b border-[#e5e0d8] flex flex-col z-50">
+    <header className="flex-shrink-0 w-full bg-[var(--bg-secondary)] border-b border-[var(--border-primary)] flex flex-col z-50">
       {/* Tabs Row */}
-      <div className="flex items-center h-9 bg-[#eae5df] px-2 border-b border-[#dcd7d0] overflow-x-auto no-scrollbar">
+      <div className="flex items-center h-10 bg-[var(--bg-tertiary)] px-2 border-b border-[var(--border-secondary)] overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-2 h-full">
-          <div className="flex items-center h-full px-4 bg-[#f4f0ea] text-[#333] text-[12px] font-medium border-t border-t-[#8ab4f8] border-r border-[#dcd7d0] min-w-[130px] justify-between">
+          <div className="flex items-center h-full px-4 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-[13px] font-medium border-t-2 border-t-[#8ab4f8] border-r border-[var(--border-secondary)] min-w-[140px] justify-between">
             <span>demo.lorien</span>
-            <button className="hover:text-black ml-3 text-[#888]"><X size={12} /></button>
+            <button className="hover:text-[var(--text-primary)] ml-4 text-[var(--text-muted)]"><X size={14} /></button>
           </div>
-          <button className="w-7 h-7 flex items-center justify-center text-[#888] hover:text-[#333] rounded hover:bg-[#dfdad2]">
-            <Plus size={14} />
+          <button className="w-8 h-8 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded hover:bg-[var(--bg-secondary)]">
+            <Plus size={16} />
+          </button>
+        </div>
+        
+        <div className="ml-auto px-4 flex items-center">
+          <button onClick={toggleTheme} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
           </button>
         </div>
       </div>
 
       {/* Ribbon Row */}
-      <div className="flex items-center h-12 px-3 gap-1 overflow-x-auto no-scrollbar">
+      <div className="flex items-center h-16 px-4 gap-1 overflow-x-auto no-scrollbar">
         {/* File Tools */}
         <div className="relative">
           <input 
             type="file" 
             accept="image/*" 
-            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" 
             title="Import Image"
             onChange={(e) => {
               if (e.target.files && e.target.files[0]) {
@@ -79,7 +89,7 @@ export default function TopBar() {
               e.target.value = '';
             }}
           />
-          <ToolBtn icon={FileImage} active={false} />
+          <ToolBtn icon={FileImage} active={false} title="Import Image" />
         </div>
         <ToolBtn icon={Save} title="Save to Cloud" />
         <ToolBtn icon={FileImage} title="Export PNG" onClick={() => window.dispatchEvent(new CustomEvent('export-board', { detail: 'png' }))} />
@@ -87,8 +97,8 @@ export default function TopBar() {
 
         <Sep />
 
-        <ToolBtn icon={Undo2} title="Undo" onClick={undo} color={canUndo ? "text-[#666]" : "text-[#aaa]"} />
-        <ToolBtn icon={Redo2} title="Redo" onClick={redo} color={canRedo ? "text-[#666]" : "text-[#aaa]"} />
+        <ToolBtn icon={Undo2} title="Undo" onClick={undo} color={canUndo ? "text-[var(--text-secondary)]" : "text-[var(--border-secondary)]"} />
+        <ToolBtn icon={Redo2} title="Redo" onClick={redo} color={canRedo ? "text-[var(--text-secondary)]" : "text-[var(--border-secondary)]"} />
 
         <Sep />
 
@@ -105,34 +115,34 @@ export default function TopBar() {
 
         {/* Color and Width */}
         <div className="flex items-center gap-4 px-2 shrink-0">
-          <div className="flex items-center gap-1.5 border border-[#dcd7d0] p-1 rounded-md bg-white">
-            {["#333333", "#e74c3c", "#3498db", "#2ecc71", "#f1c40f"].map(c => (
+          <div className="flex items-center gap-2 border border-[var(--border-secondary)] p-1.5 rounded-lg bg-[var(--bg-primary)]">
+            {["#111111", "#e74c3c", "#3498db", "#2ecc71", "#f1c40f"].map(c => (
               <button 
                 key={c} 
                 onClick={() => setCurrentColor(c)}
                 className={clsx(
-                  "w-5 h-5 rounded-full border flex items-center justify-center",
-                  currentColor === c ? "border-[#333] scale-110" : "border-transparent"
+                  "w-6 h-6 rounded-full border flex items-center justify-center transition-transform",
+                  currentColor === c ? "border-[var(--text-primary)] scale-110 shadow-sm" : "border-transparent"
                 )} 
               >
-                <div className="w-4 h-4 rounded-full" style={{ background: c }} />
+                <div className="w-5 h-5 rounded-full" style={{ background: c }} />
               </button>
             ))}
             <input 
               type="color" 
               value={currentColor} 
               onChange={(e) => setCurrentColor(e.target.value)}
-              className="w-5 h-5 p-0 border-0 bg-transparent rounded cursor-pointer ml-1" 
+              className="w-6 h-6 p-0 border-0 bg-transparent rounded cursor-pointer ml-1" 
             />
           </div>
           
-          <div className="flex items-center gap-3 border border-[#dcd7d0] px-3 py-1.5 rounded-md bg-white min-w-[140px]">
-            <span className="text-[#666] text-[11px] font-medium w-4">{currentWidth}</span>
+          <div className="flex items-center gap-3 border border-[var(--border-secondary)] px-4 py-2 rounded-lg bg-[var(--bg-primary)] min-w-[160px]">
+            <span className="text-[var(--text-secondary)] text-[12px] font-medium w-5 text-center">{currentWidth}</span>
             <input 
               type="range" min="1" max="50" 
               value={currentWidth} 
               onChange={(e) => setCurrentWidth(parseInt(e.target.value))}
-              className="w-24 accent-[#666]" 
+              className="w-28 accent-[var(--text-muted)]" 
             />
           </div>
         </div>
@@ -140,7 +150,7 @@ export default function TopBar() {
         <Sep />
         
         {/* Erase Board explicitly */}
-        <ToolBtn icon={Trash2} active={false} onClick={clearBoard} title="Erase Board" color="text-[#e74c3c]" />
+        <ToolBtn icon={Trash2} active={false} onClick={() => window.dispatchEvent(new Event('clear-board'))} title="Erase Board" color="text-[#e74c3c]" />
       </div>
     </header>
   );

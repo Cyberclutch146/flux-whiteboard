@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --bg-primary: #FCFCFA;
+    --bg-secondary: #f4f0ea;
+    --bg-tertiary: #eae5df;
+    --border-primary: #e5e0d8;
+    --border-secondary: #dcd7d0;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-muted: #888888;
+    --grid-line: rgba(229, 224, 216, 0.5);
+    --inverted-bg: #1e1e1e;
+    --inverted-text: #FFFFFF;
+  }
+
+  .dark {
+    --bg-primary: #151515;
+    --bg-secondary: #1e1e1e;
+    --bg-tertiary: #2a2a2a;
+    --border-primary: #333333;
+    --border-secondary: #111111;
+    --text-primary: #f0f0f0;
+    --text-secondary: #cccccc;
+    --text-muted: #888888;
+    --grid-line: rgba(255, 255, 255, 0.05);
+    --inverted-bg: #FCFCFA;
+    --inverted-text: #333333;
+  }
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 :root {
@@ -19,10 +49,19 @@ html,
 body {
   height: 100%;
   overflow: hidden;
-  background: #F9F9FA;
-  color: #1A1A1A;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: var(--font-syne);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Base custom styles without scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* ── Scrollbar ── */
