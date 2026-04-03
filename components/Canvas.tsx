@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { ElementType, WhiteboardElement } from "@/types";
 import { useMultiplayer } from "@/hooks/useMultiplayer";
 
-export default function Canvas({ user }: { user: any }) {
+export default function Canvas({ user, roomId }: { user: any; roomId: string | null }) {
   const {
     elements,
     addElement,
@@ -41,17 +41,6 @@ export default function Canvas({ user }: { user: any }) {
   const [editingText, setEditingText] = useState<{ id: string, x: number, y: number, text: string } | null>(null);
 
   // Multiplayer Hook
-  const [roomId, setRoomId] = useState<string | null>(null);
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    let rid = params.get("roomId");
-    if (!rid) {
-      rid = uuidv4().substring(0, 8);
-      window.history.replaceState(null, "", `?roomId=${rid}`);
-    }
-    setRoomId(rid);
-  }, []);
-
   const { emitElement, otherCursors, emitClear } = useMultiplayer(roomId, user?.uid || null, user?.displayName || "Guest");
 
   useEffect(() => {

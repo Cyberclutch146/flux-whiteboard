@@ -4,7 +4,7 @@ import {
   FileImage, FolderOpen, Save, FileDown,
   Undo2, Redo2,
   MousePointer2, Pencil, Minus, Square, Circle, Type,
-  X, Plus, Eraser, Trash2, Sun, Moon
+  X, Plus, Eraser, Trash2, Sun, Moon, Home, LogOut, User
 } from "lucide-react";
 import { useBoardStore } from "@/store/board";
 import clsx from "clsx";
@@ -33,7 +33,7 @@ function Sep() {
   return <div className="w-px h-8 bg-[var(--border-secondary)] mx-3 shrink-0" />;
 }
 
-export default function TopBar() {
+export default function TopBar({ roomId, user, onBackToHome, onSignOut }: { roomId: string | null; user: any; onBackToHome: () => void; onSignOut: () => void }) {
   const { 
     selectedTool, setSelectedTool,
     undo, redo, historyIndex, historyLength,
@@ -49,21 +49,41 @@ export default function TopBar() {
   return (
     <header className="flex-shrink-0 w-full bg-[var(--bg-secondary)] border-b border-[var(--border-primary)] flex flex-col z-50">
       {/* Tabs Row */}
-      <div className="flex items-center h-10 bg-[var(--bg-tertiary)] px-2 border-b border-[var(--border-secondary)] overflow-x-auto no-scrollbar">
+      <div className="flex items-center h-12 bg-[var(--bg-tertiary)] px-2 border-b border-[var(--border-secondary)] overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-2 h-full">
-          <div className="flex items-center h-full px-4 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-[13px] font-medium border-t-2 border-t-[#8ab4f8] border-r border-[var(--border-secondary)] min-w-[140px] justify-between">
-            <span>demo.lorien</span>
-            <button className="hover:text-[var(--text-primary)] ml-4 text-[var(--text-muted)]"><X size={14} /></button>
-          </div>
-          <button className="w-8 h-8 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded hover:bg-[var(--bg-secondary)]">
-            <Plus size={16} />
+          <button onClick={onBackToHome} className="h-8 px-3 rounded-md hover:bg-[var(--bg-secondary)] flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors ml-2">
+            <Home size={16} /> <span className="text-sm font-medium">Home</span>
           </button>
+          
+          <div className="flex items-center h-full px-4 text-[var(--text-primary)] text-[13px] font-medium border-l border-[var(--border-secondary)] ml-2">
+            <span>{roomId ? `Room: ${roomId}` : "Solo Session"}</span>
+          </div>
         </div>
         
-        <div className="ml-auto px-4 flex items-center">
-          <button onClick={toggleTheme} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+        <div className="ml-auto px-4 flex items-center gap-4">
+          <button onClick={toggleTheme} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors p-2" title="Toggle Theme">
             {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
           </button>
+          
+          <div className="w-px h-6 bg-[var(--border-secondary)]" />
+
+          {/* Profile & Sign Out Panel */}
+          <div className="flex items-center gap-3">
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt="Avatar" className="w-7 h-7 rounded-full border border-[var(--border-secondary)]" />
+            ) : (
+              <div className="w-7 h-7 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--text-secondary)]">
+                <User size={14} />
+              </div>
+            )}
+            <button 
+              onClick={onSignOut}
+              className="text-[var(--text-secondary)] hover:text-[#e74c3c] transition-colors p-1"
+              title="Sign Out"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
         </div>
       </div>
 

@@ -8,24 +8,34 @@ import Canvas        from "./Canvas";
 import StatusBar     from "./StatusBar";
 import LoadingScreen from "./LoadingScreen";
 import LoginScreen   from "./LoginScreen";
+import Dashboard     from "./Dashboard";
 import { auth, googleProvider, signInWithPopup } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useBoardStore } from "@/store/board";
+
+type AppState = 'loading' | 'login' | 'dashboard' | 'board';
+const generateRoomCode = () => Math.random().toString(36).substring(2, 9).toUpperCase();
 
 export default function WhiteboardApp() {
   useKeyboardShortcuts();
   
-  const [loaded, setLoaded] = useState(false);
+  const [appState, setAppState] = useState<AppState>('loading');
   const [user, setUser] = useState<any>(null);
-  const [authInitialized, setAuthInitialized] = useState(false);
+  const [roomId, setRoomId] = useState<string | null>(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
-      setAuthInitialized(true);
+      // Wait for LoadingScreen to finish before transitioning
+      // But if we're already past loading, transition directly
+      setAppState(prev => prev === 'loading' ? prev : (u ? 'dashboard' : 'login'));
     });
     return () => unsub();
   }, []);
+
+  const handleLoadingDone = () => {
+    setAppState(user ? 'dashboard' : 'login');
+  };
 
   const handleLogin = async () => {
     try {
@@ -34,34 +44,77 @@ export default function WhiteboardApp() {
       console.error(e);
       // Fallback for development if config is missing:
       setUser({ displayName: "Dev User" });
-      setAuthInitialized(true);
+      setAppState('dashboard');
     }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setRoomId(null);
+      setAppState('login');
+      // If we used a simulated user
+      if (user?.displayName === "Dev User") setUser(null); 
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleSolo = () => {
+    setRoomId(null);
+    setAppState('board');
+  };
+
+  const handleCreateRoom = () => {
+    const code = generateRoomCode();
+    setRoomId(code);
+    setAppState('board');
+  };
+
+  const handleJoinRoom = (code: string) => {
+    setRoomId(code);
+    setAppState('board');
   };
 
   const { theme } = useBoardStore();
 
-  const showLoader = !loaded;
-  const showLogin = loaded && authInitialized && !user;
-  const showApp = loaded && authInitialized && user;
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
 
   return (
-    <div className={`relative w-full h-screen overflow-hidden bg-white select-none flex flex-col ${theme}`}>
+    // Fixed Dark mode bug: removed bg-white, using bg-[var(--bg-primary)] from globals.css variables
+    <div className={`relative w-full h-screen overflow-hidden bg-[var(--bg-primary)] select-none flex flex-col transition-colors`}>
       <AnimatePresence>
-        {showLoader && <LoadingScreen key="loader" onDone={() => setLoaded(true)} />}
-        {showLogin && <LoginScreen key="login" onLogin={handleLogin} />}
+        {appState === 'loading' && <LoadingScreen key="loader" onDone={handleLoadingDone} />}
+        {appState === 'login' && <LoginScreen key="login" onLogin={handleLogin} />}
+        {appState === 'dashboard' && (
+          <Dashboard 
+            key="dashboard" 
+            user={user} 
+            onSignOut={handleSignOut} 
+            onSolo={handleSolo}
+            onCreateRoom={handleCreateRoom}
+            onJoinRoom={handleJoinRoom}
+          />
+        )}
       </AnimatePresence>
       
-      {showApp && (
+      {appState === 'board' && (
         <>
-          {/* Dense native-like top bar */}
-          <TopBar />
-
-          {/* Main Canvas Area */}
+          <TopBar 
+            roomId={roomId} 
+            user={user}
+            onBackToHome={() => setAppState('dashboard')} 
+            onSignOut={handleSignOut} 
+          />
           <div className="relative flex-1 overflow-hidden">
-            <Canvas user={user} />
+            <Canvas user={user} roomId={roomId} />
           </div>
-
-          {/* Minimal status bar */}
           <StatusBar />
         </>
       )}
