@@ -25,15 +25,15 @@ function BarBtn({
 }) {
   return (
     <motion.button
-      whileTap={{ scale: 0.9 }}
+      whileTap={{ y: 1 }}
       onClick={onClick}
       title={title}
       className={clsx(
         "h-7 min-w-[28px] px-2 rounded-lg border flex items-center justify-center gap-1",
         "text-text-secondary font-medium text-[12px] transition-all duration-150",
         active
-          ? "bg-accent-purple/15 border-accent-purple/35 text-purple-300"
-          : "bg-white/[0.03] border-border-subtle hover:bg-white/[0.07] hover:border-border-default hover:text-text-primary",
+          ? "bg-accent-purple/10 border-accent-purple/20 text-accent-purple"
+          : "bg-transparent border-transparent hover:bg-black/[0.04] hover:border-border-subtle hover:text-text-primary",
         className
       )}
     >
@@ -59,46 +59,38 @@ export default function BottomBar() {
   const canRedo = historyIndex < historyLength;
 
   return (
-    <footer
-      className="flex-shrink-0 h-[42px] flex items-center justify-between px-4
-        bg-canvas-bg/90 border-t border-border-subtle backdrop-blur-xl z-50"
-    >
-      {/* Left — undo/redo + history */}
-      <div className="flex items-center gap-1">
+    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end pointer-events-none z-40">
+      {/* Left Corner */}
+      <div className="pointer-events-auto flex items-center gap-1.5 p-1.5 bg-canvas-surface border border-border-default rounded-xl shadow-layer-1">
         <div className="flex">
           <BarBtn
             onClick={undo}
             title="Undo (Ctrl+Z)"
-            className={clsx("rounded-r-none border-r-0", !canUndo && "opacity-40 pointer-events-none")}
+            className={clsx("rounded-r-none border-r-0 border-border-subtle", !canUndo && "opacity-40 pointer-events-none")}
           >
             <Undo2 size={13} />
           </BarBtn>
           <BarBtn
             onClick={redo}
             title="Redo (Ctrl+Y)"
-            className={clsx("rounded-l-none", !canRedo && "opacity-40 pointer-events-none")}
+            className={clsx("rounded-l-none border-border-subtle", !canRedo && "opacity-40 pointer-events-none")}
           >
             <Redo2 size={13} />
           </BarBtn>
         </div>
-        <Sep />
-        <span className="font-mono text-[10px] text-text-muted">
-          {historyIndex > 0 ? `${historyIndex} action${historyIndex !== 1 ? "s" : ""}` : "no history"}
-        </span>
-      </div>
 
-      {/* Center — zoom */}
-      <div className="flex items-center gap-1">
+        <Sep />
+
         <BarBtn onClick={zoomOut} title="Zoom out (-)">
           <Minus size={12} />
         </BarBtn>
 
         <button
           onClick={resetZoom}
-          className="font-mono text-[12px] text-text-secondary h-7 px-3 rounded-lg
-            border border-border-subtle bg-white/[0.03]
-            hover:bg-white/[0.07] hover:border-border-default hover:text-text-primary
-            transition-all duration-150 min-w-[56px] text-center"
+          className="font-mono text-[11px] text-text-secondary h-7 px-2 rounded-lg
+            border border-transparent bg-transparent
+            hover:bg-black/[0.04] hover:border-border-subtle hover:text-text-primary
+            transition-all duration-150 min-w-[48px] text-center"
           title="Reset zoom (Ctrl+0)"
         >
           {zoom}%
@@ -107,34 +99,21 @@ export default function BottomBar() {
         <BarBtn onClick={zoomIn} title="Zoom in (+)">
           <Plus size={12} />
         </BarBtn>
+      </div>
 
-        <Sep />
-
-        <BarBtn onClick={resetZoom} title="Fit to screen">
-          <Maximize2 size={12} />
-          <span className="text-[11px]">Fit</span>
-        </BarBtn>
-
-        <Sep />
-
+      {/* Right Corner */}
+      <div className="pointer-events-auto flex items-center gap-1.5 p-1.5 bg-canvas-surface border border-border-default rounded-xl shadow-layer-1">
         <BarBtn onClick={toggleGrid} title="Toggle grid" active={isGridVisible}>
           <Grid3X3 size={12} />
         </BarBtn>
-      </div>
-
-      {/* Right — meta */}
-      <div className="flex items-center gap-2">
+        <Sep />
         <BarBtn title="Comments">
           <MessageSquare size={12} />
         </BarBtn>
         <BarBtn title="Minimap">
           <Map size={12} />
         </BarBtn>
-        <Sep />
-        <span className="font-mono text-[10px] text-text-muted">
-          {elements.length} elements
-        </span>
       </div>
-    </footer>
+    </div>
   );
 }

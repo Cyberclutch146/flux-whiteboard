@@ -21,12 +21,12 @@ function CanvasSkeleton({ onDone }: { onDone: () => void }) {
       className="absolute inset-0 z-30 bg-canvas-surface flex flex-col items-center justify-center gap-4"
     >
       <div className="flex items-center gap-2 mb-2">
-        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-accent-purple to-accent-blue" />
+        <div className="w-6 h-6 rounded-md bg-accent-purple shadow-md shadow-accent-purple/20" />
         <span className="font-bold text-sm tracking-widest text-text-muted uppercase">Flux</span>
       </div>
-      <div className="w-48 h-0.5 rounded-full bg-canvas-overlay overflow-hidden">
+      <div className="w-48 h-0.5 rounded-full bg-border-subtle overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-accent-purple to-accent-blue"
+          className="h-full bg-accent-purple"
           initial={{ x: "-100%" }}
           animate={{ x: "100%" }}
           transition={{ repeat: Infinity, duration: 1.4, ease: "linear" }}
@@ -50,9 +50,9 @@ function GridBackground({ visible }: { visible: boolean }) {
       )}
       style={{
         backgroundImage: `
-          radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px),
-          linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+          radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px),
+          linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)
         `,
         backgroundSize: "28px 28px, 280px 280px, 280px 280px",
       }}
@@ -227,9 +227,8 @@ export default function Canvas() {
           />
         ))}
 
-        {/* Text label */}
         <div
-          className="absolute pointer-events-none font-bold text-lg text-white/20"
+          className="absolute pointer-events-none font-bold text-lg text-black/10"
           style={{ left: "43%", top: "28%" }}
         >
           Ideas Board
@@ -241,7 +240,7 @@ export default function Canvas() {
           style={{
             left: "37%", top: "40%",
             width: 140,
-            background: "linear-gradient(90deg, #7c6aff, #5b9fff)",
+            background: "linear-gradient(90deg, #FF4F00, #FF7A33)",
             transform: "rotate(-15deg)",
             transformOrigin: "left center",
           }}
@@ -265,12 +264,7 @@ export default function Canvas() {
       {/* Collaborator cursors */}
       <CursorOverlay />
 
-      {/* Zoom indicator */}
-      <div className="absolute bottom-4 right-4 pointer-events-none
-        bg-canvas-overlay/80 border border-border-subtle backdrop-blur-sm
-        text-text-muted text-[10px] font-mono px-2 py-1 rounded-lg">
-        {zoom}%
-      </div>
+
 
       {/* Loading skeleton */}
       <AnimatePresence>

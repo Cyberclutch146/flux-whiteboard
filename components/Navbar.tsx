@@ -22,7 +22,7 @@ function StatusBadge({ status }: { status: ConnectionStatus }) {
     <motion.div
       layout
       className="flex items-center gap-1.5 px-3 py-1 rounded-full
-        bg-white/[0.04] border border-border-subtle text-text-secondary text-[11px] font-medium"
+        bg-black/[0.03] border border-border-subtle text-text-secondary text-[11px] font-medium"
     >
       <span className={clsx("w-1.5 h-1.5 rounded-full flex-shrink-0", dot)} />
       <AnimatePresence mode="wait">
@@ -52,7 +52,7 @@ function AvatarStack() {
           key={c.id}
           title={c.name}
           whileHover={{ y: -2, zIndex: 10 }}
-          className="relative w-7 h-7 rounded-full border-2 border-canvas-bg
+          className="relative w-7 h-7 rounded-full border-2 border-canvas-surface
             flex items-center justify-center text-[10px] font-semibold text-white cursor-pointer"
           style={{
             background: c.color,
@@ -63,14 +63,14 @@ function AvatarStack() {
           {c.initials}
           {c.active && (
             <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full
-              bg-accent-green border border-canvas-bg" />
+              bg-accent-green border border-canvas-surface" />
           )}
         </motion.div>
       ))}
       <div
-        className="w-6 h-6 rounded-full border-2 border-canvas-bg -ml-1.5
+        className="w-6 h-6 rounded-full border-2 border-canvas-surface -ml-1.5
           bg-canvas-overlay flex items-center justify-center text-[9px]
-          font-semibold text-text-secondary cursor-pointer hover:bg-white/10 transition-colors"
+          font-semibold text-text-secondary cursor-pointer hover:bg-black/[0.05] transition-colors"
         style={{ zIndex: 0 }}
       >
         +2
@@ -102,56 +102,53 @@ export default function Navbar() {
   };
 
   return (
-    <nav
-      className="relative z-50 flex items-center h-[52px] px-4 gap-4
-        bg-canvas-bg/90 border-b border-border-subtle backdrop-blur-xl"
-    >
-      {/* Logo */}
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent-purple to-accent-blue
-          flex items-center justify-center shadow-lg shadow-accent-purple/20">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M2 8L8 2L14 8L8 14Z" fill="white" fillOpacity="0.9" />
-            <circle cx="8" cy="8" r="2.5" fill="white" />
-          </svg>
+    <div className="absolute top-4 left-4 right-4 flex justify-between pointer-events-none z-50">
+      {/* Left Island */}
+      <nav className="pointer-events-auto flex items-center h-11 px-3 gap-3 bg-canvas-surface border border-border-subtle rounded-xl shadow-layer-1">
+        {/* Logo */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-accent-purple flex items-center justify-center shadow-md shadow-accent-purple/20">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M2 8L8 2L14 8L8 14Z" fill="white" fillOpacity="0.9" />
+              <circle cx="8" cy="8" r="2.5" fill="white" />
+            </svg>
+          </div>
+          <span className="font-bold text-[15px] tracking-tight text-text-primary">Flux</span>
         </div>
-        <span className="font-bold text-[15px] tracking-tight text-text-primary">Flux</span>
-      </div>
 
-      {/* Divider */}
-      <div className="w-px h-5 bg-border-subtle flex-shrink-0" />
+        {/* Divider */}
+        <div className="w-px h-5 bg-border-subtle flex-shrink-0" />
 
-      {/* Board name */}
-      <input
-        value={name}
-        onChange={handleNameChange}
-        maxLength={40}
-        spellCheck={false}
-        className="bg-transparent border border-transparent text-text-primary
-          font-semibold text-[13px] px-2 py-1 rounded-md outline-none
-          hover:bg-white/[0.04] focus:bg-white/[0.04] focus:border-border-default
-          transition-all duration-150 min-w-[80px] max-w-[200px]"
-      />
+        {/* Board name */}
+        <input
+          value={name}
+          onChange={handleNameChange}
+          maxLength={40}
+          spellCheck={false}
+          className="bg-transparent border border-transparent text-text-primary
+            font-medium text-[13px] px-2 py-1 rounded-md outline-none
+            hover:bg-black/[0.04] focus:bg-black/[0.04] focus:border-border-default
+            transition-all duration-150 min-w-[80px] max-w-[200px]"
+        />
+      </nav>
 
-      {/* Center status */}
-      <div className="flex-1 flex justify-center">
+      {/* Right Island */}
+      <nav className="pointer-events-auto flex items-center h-11 px-3 gap-2 bg-canvas-surface border border-border-subtle rounded-xl shadow-layer-1">
         <StatusBadge status={connectionStatus} />
-      </div>
-
-      {/* Right controls */}
-      <div className="flex items-center gap-2">
+        
+        <div className="w-px h-5 bg-border-subtle mx-1" />
+        
         <AvatarStack />
 
         <div className="w-px h-5 bg-border-subtle mx-1" />
 
         <motion.button
           whileHover={{ y: -1 }}
-          whileTap={{ scale: 0.96 }}
+          whileTap={{ y: 0 }}
           onClick={() => showToast("Share link copied!")}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold
-            bg-gradient-to-r from-accent-purple/15 to-accent-blue/15
-            border border-accent-purple/30 text-purple-300
-            hover:from-accent-purple/25 hover:to-accent-blue/25 hover:border-accent-purple/50
+            bg-accent-purple/10 border border-accent-purple/20 text-accent-purple
+            hover:bg-accent-purple/15 hover:border-accent-purple/40
             transition-all duration-150"
         >
           <Share2 size={12} />
@@ -165,7 +162,7 @@ export default function Navbar() {
         <NavIconBtn title="Profile">
           <User size={14} strokeWidth={1.5} />
         </NavIconBtn>
-      </div>
+      </nav>
 
       {/* Toast */}
       <AnimatePresence>
@@ -174,15 +171,15 @@ export default function Navbar() {
             initial={{ opacity: 0, y: 8, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 4, x: "-50%" }}
-            className="absolute bottom-[-44px] left-1/2 z-50
+            className="absolute top-16 left-1/2 z-50
               bg-canvas-overlay border border-border-default text-text-primary
-              text-[12px] font-medium px-4 py-2 rounded-xl shadow-xl pointer-events-none"
+              text-[12px] font-medium px-4 py-2 rounded-xl shadow-layer-2 pointer-events-none"
           >
             {toast}
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </div>
   );
 }
 
@@ -196,12 +193,11 @@ function NavIconBtn({
   return (
     <motion.button
       title={title}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.94 }}
-      className="w-8 h-8 rounded-lg border border-border-subtle bg-white/[0.03]
-        flex items-center justify-center text-text-secondary
-        hover:bg-white/[0.07] hover:border-border-default hover:text-text-primary
-        transition-all duration-150"
+      whileHover={{ y: -1 }}
+      whileTap={{ y: 0 }}
+      className="w-8 h-8 rounded-lg border border-transparent hover:border-border-subtle 
+        bg-transparent flex items-center justify-center text-text-secondary
+        hover:bg-black/[0.03] hover:text-text-primary transition-all duration-150"
     >
       {children}
     </motion.button>

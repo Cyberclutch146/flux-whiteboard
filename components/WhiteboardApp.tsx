@@ -11,19 +11,17 @@ export default function WhiteboardApp() {
   useKeyboardShortcuts();
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-canvas-bg select-none">
-      {/* Top */}
-      <Navbar />
+    <div className="relative w-full h-screen overflow-hidden bg-canvas-bg select-none">
+      {/* Canvas layer */}
+      <Canvas />
 
-      {/* Middle row */}
-      <div className="flex flex-1 overflow-hidden">
+      {/* Floating UI layer */}
+      <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden">
+        <Navbar />
         <Toolbar />
-        <Canvas />
         <RightPanel />
+        <BottomBar />
       </div>
-
-      {/* Bottom */}
-      <BottomBar />
     </div>
   );
 }

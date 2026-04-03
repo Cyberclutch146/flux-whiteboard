@@ -40,7 +40,7 @@ function ColorPicker({
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 bg-canvas-overlay border border-border-subtle text-text-primary
+          className="flex-1 bg-transparent border border-border-subtle text-text-primary
             font-mono text-[11px] px-2 py-1 rounded-lg outline-none
             hover:border-border-default focus:border-accent-purple/40 transition-colors"
         />
@@ -96,7 +96,7 @@ function Section({
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-3
-          hover:bg-white/[0.02] transition-colors"
+          hover:bg-black/[0.02] transition-colors"
       >
         <span className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">
           {title}
@@ -145,7 +145,7 @@ function PropField({
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 bg-canvas-overlay border border-border-subtle text-text-primary
+          className="flex-1 bg-transparent border border-border-subtle text-text-primary
             font-mono text-[12px] px-2 py-1 rounded-lg outline-none w-full
             hover:border-border-default focus:border-accent-purple/40 transition-colors"
         />
@@ -226,7 +226,7 @@ function LayerRow({
       className={clsx(
         "flex items-center justify-between py-1.5 px-2 rounded-lg cursor-pointer",
         "transition-colors duration-100",
-        isSelected ? "bg-accent-purple/10" : "hover:bg-white/[0.03]",
+        isSelected ? "bg-accent-purple/10" : "hover:bg-black/[0.03]",
         !el.visible && "opacity-40"
       )}
     >
@@ -247,7 +247,7 @@ function LayerRow({
         <button
           onClick={(e) => { e.stopPropagation(); onToggleLock(); }}
           className="w-5 h-5 rounded flex items-center justify-center text-text-muted
-            hover:text-text-secondary hover:bg-white/[0.06] transition-colors"
+            hover:text-text-primary hover:bg-black/[0.05] transition-colors"
         >
           {el.locked
             ? <Lock size={9} />
@@ -256,7 +256,7 @@ function LayerRow({
         <button
           onClick={(e) => { e.stopPropagation(); onToggleVisible(); }}
           className="w-5 h-5 rounded flex items-center justify-center text-text-muted
-            hover:text-text-secondary hover:bg-white/[0.06] transition-colors"
+            hover:text-text-primary hover:bg-black/[0.05] transition-colors"
         >
           {el.visible ? <Eye size={9} /> : <EyeOff size={9} />}
         </button>
@@ -284,14 +284,15 @@ export default function RightPanel() {
       {isPanelOpen && (
         <motion.aside
           key="right-panel"
-          initial={{ width: 0, opacity: 0 }}
-          animate={{ width: 240, opacity: 1 }}
-          exit={{ width: 0, opacity: 0 }}
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 20, opacity: 0 }}
           transition={{ type: "spring", stiffness: 500, damping: 40 }}
-          className="flex-shrink-0 h-full bg-canvas-bg/90 border-l border-border-subtle
-            backdrop-blur-xl overflow-hidden z-40"
+          className="pointer-events-auto absolute top-20 right-4 w-[240px] max-h-[calc(100vh-160px)]
+            bg-canvas-surface border border-border-default rounded-2xl shadow-layer-2
+            flex flex-col overflow-hidden z-40"
         >
-          <div className="w-[240px] h-full flex flex-col overflow-y-auto">
+          <div className="w-full flex-1 overflow-y-auto overflow-x-hidden">
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3
               border-b border-border-subtle flex-shrink-0">
@@ -301,7 +302,7 @@ export default function RightPanel() {
               <button
                 onClick={closePanel}
                 className="w-5 h-5 rounded flex items-center justify-center
-                  text-text-muted hover:text-text-secondary hover:bg-white/[0.06] transition-colors"
+                  text-text-muted hover:text-text-primary hover:bg-black/[0.05] transition-colors"
               >
                 <X size={11} />
               </button>

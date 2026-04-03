@@ -19,8 +19,8 @@ html,
 body {
   height: 100%;
   overflow: hidden;
-  background: #0a0a0f;
-  color: #e8e8f0;
+  background: #F9F9FA;
+  color: #1A1A1A;
   font-family: var(--font-syne);
   -webkit-font-smoothing: antialiased;
 }
@@ -28,8 +28,8 @@ body {
 /* ── Scrollbar ── */
 ::-webkit-scrollbar         { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track   { background: transparent; }
-::-webkit-scrollbar-thumb   { background: rgba(255,255,255,0.12); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+::-webkit-scrollbar-thumb   { background: rgba(0,0,0,0.12); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
 
 /* ── Slider ── */
 input[type="range"] {
@@ -37,7 +37,7 @@ input[type="range"] {
   appearance: none;
   height: 3px;
   border-radius: 2px;
-  background: #1c1c28;
+  background: #e2e8f0;
   outline: none;
   cursor: pointer;
   width: 100%;
@@ -48,27 +48,27 @@ input[type="range"]::-webkit-slider-thumb {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #7c6aff;
-  border: 2px solid #0a0a0f;
+  background: #FF4F00;
+  border: 2px solid #F9F9FA;
   cursor: pointer;
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.15);
-  box-shadow: 0 0 0 3px rgba(124, 106, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(255, 79, 0, 0.25);
 }
 
 /* ── Focus ── */
 input:focus-visible {
   outline: none;
-  border-color: rgba(124,106,255,0.5) !important;
+  border-color: rgba(255,79,0,0.5) !important;
 }
 
 /* ── Selection ── */
 ::selection {
-  background: rgba(124, 106, 255, 0.35);
-  color: #e8e8f0;
+  background: rgba(255, 79, 0, 0.2);
+  color: #1A1A1A;
 }
 
 /* ── Cursor utilities ── */

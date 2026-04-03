@@ -44,24 +44,24 @@ function ToolButton({ tool, isActive }: { tool: Tool; isActive: boolean }) {
   return (
     <div className="relative group">
       <motion.button
-        whileTap={{ scale: 0.88 }}
+        whileTap={{ y: 1 }}
         onClick={() => setSelectedTool(tool.id)}
         className={clsx(
-          "w-10 h-10 rounded-[10px] flex items-center justify-center",
-          "border transition-all duration-150",
+          "relative w-10 h-10 rounded-[10px] flex items-center justify-center transition-all duration-150 overflow-hidden",
           isActive
-            ? "bg-gradient-to-br from-accent-purple/20 to-accent-blue/20 border-accent-purple/40 text-purple-300"
-            : "border-transparent text-text-muted hover:bg-white/[0.06] hover:border-border-subtle hover:text-text-secondary"
+            ? "text-accent-purple"
+            : "text-text-muted hover:bg-black/[0.04] hover:text-text-primary"
         )}
         aria-label={tool.label}
         aria-pressed={isActive}
       >
-        {/* Active glow */}
+        {/* Active background blob */}
         {isActive && (
           <motion.span
-            layoutId="tool-glow"
-            className="absolute inset-0 rounded-[10px] bg-accent-purple/10"
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            layoutId="tool-active-blob"
+            className="absolute inset-0 bg-accent-purple/10"
+            style={{ borderRadius: 10 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
           />
         )}
         <span className="relative z-10">{ICONS[tool.id]}</span>
@@ -69,21 +69,18 @@ function ToolButton({ tool, isActive }: { tool: Tool; isActive: boolean }) {
 
       {/* Tooltip */}
       <div
-        className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2
+        className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2
           opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-[200]"
       >
-        <div className="flex items-center gap-2 bg-canvas-elevated border border-border-default
-          text-text-primary text-[11px] font-medium px-2.5 py-1.5 rounded-lg shadow-xl
+        <div className="flex items-center gap-2 bg-canvas-surface border border-border-default
+          text-text-primary text-[11px] font-medium px-2.5 py-1.5 rounded-lg shadow-layer-1
           whitespace-nowrap">
           {tool.label}
-          <kbd className="bg-canvas-overlay border border-border-default rounded px-1 py-0.5
+          <kbd className="bg-black/5 border border-border-subtle rounded px-1 py-0.5
             font-mono text-[9px] text-text-muted leading-none">
             {tool.shortcut}
           </kbd>
         </div>
-        {/* Arrow */}
-        <div className="absolute right-full top-1/2 -translate-y-1/2 -mr-px
-          border-4 border-transparent border-r-border-default" />
       </div>
     </div>
   );
@@ -96,15 +93,14 @@ export default function Toolbar() {
 
   return (
     <aside
-      className="flex-shrink-0 w-14 flex flex-col items-center gap-1
-        pt-3 pb-4 px-2
-        bg-canvas-bg/80 border-r border-border-subtle
-        backdrop-blur-xl z-40"
+      className="pointer-events-auto absolute bottom-6 left-1/2 -translate-x-1/2
+        flex items-center gap-1.5 p-1.5
+        bg-canvas-surface border border-border-default rounded-2xl shadow-layer-2 z-50"
     >
       {TOOLS.map((tool, i) => (
-        <div key={tool.id} className="flex flex-col items-center w-full">
+        <div key={tool.id} className="flex items-center h-10">
           {groupBreak(TOOLS[i - 1], tool) && (
-            <div className="w-8 h-px bg-border-subtle my-1.5" />
+            <div className="w-px h-6 bg-border-subtle mx-1.5" />
           )}
           <ToolButton tool={tool} isActive={selectedTool === tool.id} />
         </div>
