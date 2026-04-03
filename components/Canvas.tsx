@@ -7,6 +7,8 @@ import { useBoardStore } from "@/store/board";
 import { v4 as uuidv4 } from "uuid";
 import type { ElementType, WhiteboardElement } from "@/types";
 import { useMultiplayer } from "@/hooks/useMultiplayer";
+import { useYjsWhiteboard } from "@/hooks/useYjsWhiteboard";
+import * as Y from "yjs";
 
 export default function Canvas({ user, roomId }: { user: any; roomId: string | null }) {
   const {
@@ -29,9 +31,10 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
   const stageRef = useRef<any>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   
-  // Drawing state
+  // Drawing state (Now integrated with Yjs)
+  const { yElements, yjsElements } = useYjsWhiteboard(roomId);
   const isDrawing = useRef(false);
-  const [currentLine, setCurrentLine] = useState<WhiteboardElement | null>(null);
+  const activeYMapRef = useRef<Y.Map<any> | null>(null);
   
   // Panning state
   const isPanning = useRef(false);
@@ -107,13 +110,17 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
   useEffect(() => {
     const handleImportImage = (e: any) => {
       const dataUrl = e.detail;
-      const el: WhiteboardElement = {
+      const elProps = {
         id: uuidv4(), type: "image" as any, x: Math.random() * 100 - panOffset.x, y: Math.random() * 100 - panOffset.y, width: 300, height: 300, rotation: 0,
         opacity: 100, fill: "transparent", stroke: "transparent", strokeWidth: 0, locked: false,
         visible: true, label: "Image", text: dataUrl 
       };
-      addElement(el);
-      emitElement(el);
+      
+      const yMap = new Y.Map();
+      for (const [k, v] of Object.entries(elProps)) {
+        yMap.set(k, v);
+      }
+      yElements?.push([yMap]);
       pushHistory();
     };
     window.addEventListener('import-image', handleImportImage);
@@ -138,8 +145,12 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         opacity: 100, fill: f, stroke: "transparent", strokeWidth: 0, locked: false,
         visible: true, label: "Text", text: editingText.text
       };
-      addElement(el);
-      emitElement(el);
+      
+      const yMap = new Y.Map();
+      for (const [k, v] of Object.entries(el)) {
+        yMap.set(k, v);
+      }
+      yElements?.push([yMap]);
       pushHistory();
     }
     setEditingText(null);
@@ -170,7 +181,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
 
     if (selectedTool === "pencil" || selectedTool === "line" || selectedTool === "eraser") {
       isDrawing.current = true;
-      setCurrentLine({
+      const initialProps = {
         id: uuidv4(),
         type: (selectedTool === "pencil" || selectedTool === "eraser") ? "path" : "line",
         x: 0, y: 0, width: 0, height: 0, rotation: 0, opacity: 100,
@@ -178,19 +189,43 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         stroke: selectedTool === "eraser" ? "#FCFCFA" : currentColor,
         strokeWidth: currentWidth,
         locked: false, visible: true, label: selectedTool,
-        points: [worldX, worldY],
         globalCompositeOperation: selectedTool === "eraser" ? "destination-out" : "source-over"
-      });
+      };
+      
+      const yMap = new Y.Map();
+      for (const [k, v] of Object.entries(initialProps)) {
+        if (v !== undefined) yMap.set(k, v);
+      }
+      
+      // Use Y.Array for path points to get atomic updates
+      if (initialProps.type === "path") {
+        const yPoints = new Y.Array<number>();
+        yPoints.push([worldX, worldY]);
+        yMap.set("points", yPoints);
+      } else {
+        yMap.set("points", [worldX, worldY]);
+      }
+
+      yElements?.push([yMap]);
+      activeYMapRef.current = yMap;
     } else if (selectedTool === "rect" || selectedTool === "circle") {
       isDrawing.current = true;
-      setCurrentLine({
+      const initialProps = {
         id: uuidv4(),
         type: selectedTool as ElementType,
         x: worldX, y: worldY, width: 0, height: 0, rotation: 0, opacity: 100,
         fill: "transparent", stroke: currentColor, strokeWidth: currentWidth,
         locked: false, visible: true, label: selectedTool,
         globalCompositeOperation: "source-over"
-      });
+      };
+      
+      const yMap = new Y.Map();
+      for (const [k, v] of Object.entries(initialProps)) {
+        if (v !== undefined) yMap.set(k, v);
+      }
+      
+      yElements?.push([yMap]);
+      activeYMapRef.current = yMap;
     } else if (selectedTool === "text") {
       setEditingText({ id: uuidv4(), x: worldX, y: worldY, text: "" });
     }
@@ -207,39 +242,40 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
       return;
     }
 
-    if (!isDrawing.current || !currentLine) return;
+    if (!isDrawing.current || !activeYMapRef.current) return;
 
     const worldX = (pos.x - panOffset.x) / (zoom / 100);
     const worldY = (pos.y - panOffset.y) / (zoom / 100);
 
-    if (currentLine.type === "path") {
-      setCurrentLine({
-        ...currentLine,
-        points: [...(currentLine.points || []), worldX, worldY]
-      });
-    } else if (currentLine.type === "line") {
-      setCurrentLine({
-        ...currentLine,
-        points: [(currentLine.points || [])[0], (currentLine.points || [])[1], worldX, worldY]
-      });
-    } else if (currentLine.type === "rect" || currentLine.type === "circle") {
-      setCurrentLine({
-        ...currentLine,
-        width: worldX - currentLine.x,
-        height: worldY - currentLine.y
-      });
-    }
+    const elType = activeYMapRef.current.get("type");
+
+    // Yjs Transaction enables multiple updates to dispatch at once efficiently
+    yElements?.doc?.transact(() => {
+      if (elType === "path") {
+        const yPoints = activeYMapRef.current!.get("points");
+        if (yPoints instanceof Y.Array) {
+          yPoints.push([worldX, worldY]);
+        }
+      } else if (elType === "line") {
+        const oldPoints = activeYMapRef.current!.get("points") || [];
+        activeYMapRef.current!.set("points", [oldPoints[0], oldPoints[1], worldX, worldY]);
+      } else if (elType === "rect" || elType === "circle") {
+        const startX = activeYMapRef.current!.get("x");
+        const startY = activeYMapRef.current!.get("y");
+        activeYMapRef.current!.set("width", worldX - startX);
+        activeYMapRef.current!.set("height", worldY - startY);
+      }
+    });
   };
 
   const handlePointerUp = () => {
     isPanning.current = false;
-    if (isDrawing.current && currentLine) {
-      addElement(currentLine);
-      emitElement(currentLine);
-      setCurrentLine(null);
-      pushHistory();
-    }
     isDrawing.current = false;
+    
+    if (activeYMapRef.current) {
+      pushHistory();
+      activeYMapRef.current = null;
+    }
   };
 
   // --- EARLY RETURN MUST HAPPEN AFTER ALL HOOKS ---
@@ -303,9 +339,16 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         <Layer x={panOffset.x} y={panOffset.y} scaleX={scale} scaleY={scale}>
           {elements.map((el) => {
             if (!el.visible) return null;
+            // Avoid duplicate rendering if element is also in Yjs
+            if (yjsElements.some(yEl => yEl.id === el.id)) return null;
             return <React.Fragment key={el.id}>{renderElement(el)}</React.Fragment>;
           })}
-          {currentLine && renderElement(currentLine)}
+          
+          {/* Render new Yjs-streamed elements */}
+          {yjsElements.map((el) => {
+            if (!el.visible) return null;
+            return <React.Fragment key={el.id}>{renderElement(el)}</React.Fragment>;
+          })}
           
           {/* Render Other Users' Cursors */}
           {Object.entries(otherCursors).map(([uid, cursor]) => (
