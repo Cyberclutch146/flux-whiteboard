@@ -129,6 +129,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
     const handleClear = () => {
       useBoardStore.getState().clearBoard();
       emitClear();
+      yElements?.delete(0, yElements.length);
     };
     window.addEventListener('clear-board', handleClear);
 
@@ -293,6 +294,9 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
     
     if (activeYMapRef.current) {
       pushHistory();
+      if (currentLine) {
+        emitElement(currentLine);
+      }
       activeYMapRef.current = null;
       setCurrentLine(null);
     }
