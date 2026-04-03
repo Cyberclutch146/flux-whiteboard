@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { database } from "@/lib/firebase";
 import { ref, onValue, set } from "firebase/database";
 import { useBoardStore } from "@/store/board";
+import GhostCursors from "./GhostCursors";
 
 // Import react-quill-new dynamically to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill-new"), {
@@ -22,6 +23,7 @@ interface NotebookProps {
 export default function Notebook({ user, roomId }: NotebookProps) {
   const { notebookContent, setNotebookContent } = useBoardStore();
   const [internalValue, setInternalValue] = useState(notebookContent || "");
+  const containerRef = useRef<HTMLDivElement>(null);
   
   // Timer for debouncing firebase writes
   const typingTimer = useRef<NodeJS.Timeout | null>(null);
@@ -42,7 +44,7 @@ export default function Notebook({ user, roomId }: NotebookProps) {
     });
 
     return () => unsubscribe();
-  }, [roomId]); // Explicitly omitted internalValue to avoid infinite loops
+  }, [roomId]); 
 
   // Handle changes
   const handleChange = (content: string, delta: any, source: string, editor: any) => {
@@ -76,8 +78,10 @@ export default function Notebook({ user, roomId }: NotebookProps) {
   ];
 
   return (
-    <div className="w-full h-full flex flex-col items-center bg-[var(--bg-secondary)] overflow-y-auto no-scrollbar py-12 px-4">
-      <div className="w-full max-w-4xl bg-[var(--bg-primary)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] min-h-[100vh] border border-[var(--border-primary)] rounded-[2rem] overflow-hidden">
+    <div className="relative w-full h-full flex flex-col items-center bg-[var(--bg-secondary)] overflow-y-auto no-scrollbar py-12 px-4" ref={containerRef}>
+      {roomId && <GhostCursors roomId={roomId} currentUser={user} containerRef={containerRef} />}
+      
+      <div className="relative w-full max-w-4xl bg-[var(--bg-primary)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] min-h-[100vh] border border-[var(--border-primary)] rounded-[2rem] overflow-hidden z-10">
         <ReactQuill
           theme="snow"
           value={internalValue}

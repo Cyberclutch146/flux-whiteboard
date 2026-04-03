@@ -86,7 +86,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
       const dataURL = stageRef.current.toDataURL({ pixelRatio: 2 });
       if (e.detail === 'png') {
         const link = document.createElement("a");
-        link.download = "flux-board.png";
+        link.download = "SYNQ-board.png";
         link.href = dataURL;
         document.body.appendChild(link);
         link.click();
@@ -95,7 +95,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         import('jspdf').then((jsPDF) => {
           const pdf = new jsPDF.jsPDF('landscape', 'px', [stageRef.current.width() / 2, stageRef.current.height() / 2]);
           pdf.addImage(dataURL, 'PNG', 0, 0, stageRef.current.width() / 2, stageRef.current.height() / 2);
-          pdf.save('flux-board.pdf');
+          pdf.save('SYNQ-board.pdf');
         });
       }
     };

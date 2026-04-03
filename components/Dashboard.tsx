@@ -3,7 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Users, FilePlus, LogOut, ArrowRight, X, Sun, Moon, Menu, Github, Linkedin, Instagram, Globe } from "lucide-react";
 import { useState, useRef } from "react";
-import VariableProximity from "./VariableProximity";
+import Noise from "./Noise";
+import TextPressure from "./TextPressure";
 import ShapeGrid from "./ShapeGrid";
 import { useBoardStore } from "@/store/board";
 
@@ -22,6 +23,7 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
   const [joinCode, setJoinCode] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [localMode, setLocalMode] = useState<'notebook' | 'board'>('notebook');
+  const [showConnectPanel, setShowConnectPanel] = useState(false);
   
   const { theme, toggleTheme, setMode } = useBoardStore();
 
@@ -39,7 +41,13 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
 
   return (
     <div ref={containerRef} className="absolute inset-0 flex flex-col bg-[var(--bg-primary)] z-40 transition-colors overflow-hidden">
-      
+      <Noise 
+        patternSize={250}
+        patternScaleX={2}
+        patternScaleY={2}
+        patternRefreshInterval={2}
+        patternAlpha={15}
+      />
       {/* Noise Overlay for Human-Crafted Texture */}
       <div 
         className="absolute inset-0 z-[1] pointer-events-none mix-blend-overlay opacity-30 dark:opacity-[0.05]" 
@@ -117,20 +125,23 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
         
         {/* Left Col: Expressive Typography Hero */}
         <div className="flex-1 flex flex-col items-start justify-center min-w-[300px] pt-12 lg:pt-0">
-          <div className="relative">
+          <div className="relative w-full overflow-visible h-[200px] pointer-events-auto">
             {/* The dramatic background glow for the title */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[150%] bg-white/5 dark:bg-white/10 blur-[80px] rounded-[100%] pointer-events-none" />
-            <h1 className="text-7xl sm:text-8xl md:text-[140px] font-black tracking-[-0.04em] text-[var(--text-primary)] leading-[0.85] cursor-default mix-blend-difference z-10 relative">
-              {/* @ts-ignore */}
-              <VariableProximity
-                label="FLUX"
-                fromFontVariationSettings="'wght' 400, 'wdth' 100"
-                toFontVariationSettings="'wght' 900, 'wdth' 100"
-                containerRef={containerRef}
-                radius={250}
-                falloff="linear"
-              />
-            </h1>
+            
+            {/* @ts-ignore */}
+            <TextPressure
+              text="SYNQ"
+              flex
+              alpha={false}
+              stroke={false}
+              width
+              weight
+              italic
+              textColor="var(--text-primary)"
+              strokeColor="#5227FF"
+              minFontSize={120}
+            />
           </div>
           
           <div className="mt-8 ml-2 border-l-2 border-[var(--border-secondary)] pl-6 py-2">
@@ -333,19 +344,80 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
         </div>
       </main>
 
-      {/* Elegant Footer */}
+      {/* Connect With Me Modal */}
+      <AnimatePresence>
+        {showConnectPanel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 pointer-events-auto"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setShowConnectPanel(false);
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-[var(--bg-primary)] border border-[var(--border-primary)] shadow-2xl rounded-3xl p-8 max-w-md w-full relative overflow-hidden"
+            >
+              <button 
+                onClick={() => setShowConnectPanel(false)}
+                className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+              >
+                <X size={20} />
+              </button>
+              
+              <div className="flex flex-col items-center mb-6">
+                <div className="w-24 h-24 rounded-full overflow-hidden shadow-lg border-4 border-[var(--bg-secondary)] mb-4">
+                  <img src="/profile.png" alt="Swagata Ganguly" className="w-full h-full object-cover" />
+                </div>
+                <h2 className="text-2xl font-black text-[var(--text-primary)] tracking-tight">Swagata Ganguly</h2>
+                <p className="text-sm text-[var(--text-muted)] font-medium mt-1">Creative Engineer & Systems Architect</p>
+              </div>
+
+              <div className="h-px w-full bg-[var(--border-primary)] my-6" />
+
+               <div className="grid grid-cols-2 gap-4">
+                <a href="https://github.com/Cyberclutch" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] hover:border-white/20 hover:bg-white/5 transition-all group">
+                  <Github className="text-[var(--text-muted)] group-hover:text-white transition-colors" size={20} />
+                  <span className="text-sm font-bold text-[var(--text-primary)]">GitHub</span>
+                </a>
+                <a href="https://www.linkedin.com/in/swagata-ganguly" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] hover:border-[#0a66c2]/50 hover:bg-[#0a66c2]/10 transition-all group">
+                  <Linkedin className="text-[var(--text-muted)] group-hover:text-[#0a66c2] transition-colors" size={20} />
+                  <span className="text-sm font-bold text-[var(--text-primary)]">LinkedIn</span>
+                </a>
+                <a href="https://instagram.com/blazing_stxrx" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] hover:border-[#e1306c]/50 hover:bg-[#e1306c]/10 transition-all group">
+                  <Instagram className="text-[var(--text-muted)] group-hover:text-[#e1306c] transition-colors" size={20} />
+                  <span className="text-sm font-bold text-[var(--text-primary)]">Instagram</span>
+                </a>
+                <a href="https://swagata-ganguly.vercel.app/" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] hover:border-[#2ecc71]/50 hover:bg-[#2ecc71]/10 transition-all group">
+                  <Globe className="text-[var(--text-muted)] group-hover:text-[#2ecc71] transition-colors" size={20} />
+                  <span className="text-sm font-bold text-[var(--text-primary)]">Portfolio</span>
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Elegant Footer glass panel */}
       <footer className="absolute bottom-6 left-0 right-0 z-50 px-8 lg:px-16 pointer-events-none">
-        <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-[1400px] mx-auto gap-4">
-          <div className="text-[11px] font-bold tracking-[0.2em] uppercase text-[var(--text-muted)] pointer-events-auto hover:text-[var(--text-primary)] transition-colors cursor-pointer relative group">
-            Swagata Ganguly
-            <div className="absolute -bottom-1 left-0 w-0 h-px bg-[var(--text-primary)] transition-all duration-300 group-hover:w-full" />
+        <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-[1400px] mx-auto gap-4 relative">
+          <div 
+            onClick={() => setShowConnectPanel(true)}
+            className="text-[11px] font-bold tracking-[0.2em] uppercase text-[var(--text-muted)] pointer-events-auto hover:text-[var(--text-primary)] transition-colors cursor-pointer relative group flex items-center gap-2 bg-[var(--bg-primary)]/50 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-primary)] shadow-sm hover:-translate-y-1"
+          >
+            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            Designed by Swagata Ganguly
           </div>
           
-          <div className="flex items-center gap-6 pointer-events-auto">
-            <a href="#" className="text-[var(--text-muted)] hover:text-white transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"><Github size={18} strokeWidth={2}/></a>
-            <a href="#" className="text-[var(--text-muted)] hover:text-[#0a66c2] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(10,102,194,0.5)]"><Linkedin size={18} strokeWidth={2}/></a>
-            <a href="#" className="text-[var(--text-muted)] hover:text-[#e1306c] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(225,48,108,0.5)]"><Instagram size={18} strokeWidth={2}/></a>
-            <a href="#" className="text-[var(--text-muted)] hover:text-[#2ecc71] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(46,204,113,0.5)]"><Globe size={18} strokeWidth={2}/></a>
+          <div className="flex items-center gap-6 pointer-events-auto bg-[var(--bg-primary)]/50 backdrop-blur-md px-6 py-2 rounded-full border border-[var(--border-primary)] shadow-sm">
+            <a href="https://github.com/Cyberclutch" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-white transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"><Github size={18} strokeWidth={2}/></a>
+            <a href="https://www.linkedin.com/in/swagata-ganguly" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#0a66c2] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(10,102,194,0.5)]"><Linkedin size={18} strokeWidth={2}/></a>
+            <a href="https://instagram.com/blazing_stxrx" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#e1306c] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(225,48,108,0.5)]"><Instagram size={18} strokeWidth={2}/></a>
+            <a href="https://swagata-ganguly.vercel.app/" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#2ecc71] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(46,204,113,0.5)]"><Globe size={18} strokeWidth={2}/></a>
           </div>
         </div>
       </footer>

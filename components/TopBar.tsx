@@ -9,7 +9,7 @@ import {
 import { useBoardStore } from "@/store/board";
 import clsx from "clsx";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 function ToolBtn({ icon: Icon, active, onClick, title, color = "text-[var(--text-secondary)]", activeColor = "text-[var(--inverted-text)] bg-[var(--inverted-bg)]" }: any) {
   return (
@@ -36,6 +36,7 @@ function Sep() {
 
 export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }: { roomId: string | null; user: any; title?: string; onBackToHome: () => void; onSignOut: () => void }) {
   const [copied, setCopied] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const { 
     selectedTool, setSelectedTool,
     undo, redo, historyIndex, historyLength,
@@ -209,38 +210,104 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
         )}
 
         {title === "Collaborative Notebook" && (
-          <div className="flex items-center gap-2 ml-4">
-            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold mr-2">Export:</span>
-            <ToolBtn icon={FileDown} title="Export PDF" onClick={() => window.print()} />
-            <ToolBtn 
-              icon={Save} 
-              title="Export TXT" 
-              onClick={() => {
-                const text = document.querySelector('.ql-editor')?.textContent || '';
-                const blob = new Blob([text], { type: "text/plain" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "notebook.txt";
-                a.click();
-              }} 
-            />
-            <ToolBtn 
-              icon={FolderOpen} 
-              title="Export DOC (Word)" 
-              onClick={() => {
-                const html = document.querySelector('.ql-editor')?.innerHTML || '';
-                const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>";
-                const footer = "</body></html>";
-                const sourceHTML = header + html + footer;
-                const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "notebook.doc";
-                a.click();
-              }} 
-            />
+          <div className="flex items-center gap-4 ml-4">
+            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold mr-2">File Operations:</span>
+            
+            <div className="relative">
+              <input 
+                type="file" 
+                accept=".txt,.doc,.docx" 
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" 
+                title="Open Document"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      if (ev.target?.result) {
+                        const content = ev.target.result.toString();
+                        // Extremely simple: drop the text into the board store.
+                        // We wrap plain text in <p> tags so Quill renders it correctly.
+                        const htmlContent = content.split('\n').map(line => `<p>${line}</p>`).join('');
+                        useBoardStore.getState().setNotebookContent(htmlContent);
+                      }
+                    };
+                    reader.readAsText(file);
+                  }
+                  e.target.value = '';
+                }}
+              />
+              <ToolBtn icon={FolderOpen} active={false} title="Open Document" />
+            </div>
+
+            <div className="relative">
+              <ToolBtn 
+                icon={FileDown} 
+                title="Export Options" 
+                active={showExportMenu}
+                onClick={() => setShowExportMenu(!showExportMenu)} 
+              />
+              
+              <AnimatePresence>
+                {showExportMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-14 left-0 w-48 bg-[var(--bg-primary)] border border-[var(--border-secondary)] rounded-xl shadow-2xl py-2 z-50 flex flex-col overflow-hidden"
+                  >
+                    <button 
+                      className="px-4 py-3 text-left text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-3 text-[var(--text-primary)]"
+                      onClick={() => {
+                        window.print();
+                        setShowExportMenu(false);
+                      }}
+                    >
+                      <FileDown size={16} className="text-red-500" /> Export as PDF
+                    </button>
+                    
+                    <button 
+                      className="px-4 py-3 text-left text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-3 text-[var(--text-primary)] border-t border-[var(--border-secondary)]"
+                      onClick={() => {
+                        const text = document.querySelector('.ql-editor')?.textContent || '';
+                        const blob = new Blob([text], { type: "text/plain" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "notebook.txt";
+                        a.click();
+                        setShowExportMenu(false);
+                      }}
+                    >
+                      <Save size={16} className="text-gray-500" /> Export as TXT
+                    </button>
+
+                    <button 
+                      className="px-4 py-3 text-left text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-3 text-[var(--text-primary)] border-t border-[var(--border-secondary)]"
+                      onClick={() => {
+                        const html = document.querySelector('.ql-editor')?.innerHTML || '';
+                        const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>";
+                        const footer = "</body></html>";
+                        const sourceHTML = header + html + footer;
+                        const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "notebook.doc";
+                        a.click();
+                        setShowExportMenu(false);
+                      }}
+                    >
+                      <FileImage size={16} className="text-blue-500" /> Export as DOCX
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            
+            {showExportMenu && (
+              <div className="fixed inset-0 z-40" onClick={() => setShowExportMenu(false)} />
+            )}
           </div>
         )}
       </div>

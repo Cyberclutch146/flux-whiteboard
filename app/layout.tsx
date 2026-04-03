@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Flux — Collaborative Whiteboard",
-  description: "Real-time collaborative whiteboard built with Next.js",
+  title: "SYNQ — Collaborative Suite",
+  description: "Real-time structured dual workspace built for humans",
 };
 
 export default function RootLayout({

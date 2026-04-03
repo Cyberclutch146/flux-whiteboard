@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { LogIn } from "lucide-react";
-import VariableProximity from "./VariableProximity";
+import TextPressure from "./TextPressure";
 import { useRef } from "react";
 
 export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
@@ -19,15 +19,19 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
         ref={containerRef} 
         className="relative z-10 flex flex-col items-center pointer-events-auto gap-8"
       >
-        <div className="text-[#333] text-5xl font-extrabold tracking-widest cursor-default">
+        <div className="relative w-[300px] h-[100px] pointer-events-auto">
           {/* @ts-ignore */}
-          <VariableProximity
-            label="FLUX"
-            fromFontVariationSettings="'wght' 400"
-            toFontVariationSettings="'wght' 900"
-            containerRef={containerRef}
-            radius={120}
-            falloff="linear"
+          <TextPressure
+            text="SYNQ"
+            flex
+            alpha={false}
+            stroke={false}
+            width
+            weight
+            italic
+            textColor="#333333"
+            strokeColor="#5227FF"
+            minFontSize={80}
           />
         </div>
         

@@ -203,3 +203,33 @@ input:focus-visible {
 .animate-pulse-slow {
   animation: pulse-slow 8s infinite ease-in-out;
 }
+
+/* ── Print Isolation for PDF Export ── */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  .ql-editor, .ql-editor * {
+    visibility: visible;
+  }
+  
+  .ql-editor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    /* Remove shadow/border in print */
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Override dark mode for print */
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+}
