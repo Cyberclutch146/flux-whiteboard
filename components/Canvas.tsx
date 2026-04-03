@@ -35,6 +35,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
   const { yElements, yjsElements } = useYjsWhiteboard(roomId);
   const isDrawing = useRef(false);
   const activeYMapRef = useRef<Y.Map<any> | null>(null);
+  const [currentLine, setCurrentLine] = useState<WhiteboardElement | null>(null);
   
   // Panning state
   const isPanning = useRef(false);
@@ -208,6 +209,8 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
 
       yElements?.push([yMap]);
       activeYMapRef.current = yMap;
+      
+      setCurrentLine({ ...initialProps, points: [worldX, worldY] } as any);
     } else if (selectedTool === "rect" || selectedTool === "circle") {
       isDrawing.current = true;
       const initialProps = {
@@ -226,6 +229,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
       
       yElements?.push([yMap]);
       activeYMapRef.current = yMap;
+      setCurrentLine(initialProps as any);
     } else if (selectedTool === "text") {
       setEditingText({ id: uuidv4(), x: worldX, y: worldY, text: "" });
     }
@@ -266,6 +270,21 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         activeYMapRef.current!.set("height", worldY - startY);
       }
     });
+
+    setCurrentLine((prev) => {
+      if (!prev) return prev;
+      if (prev.type === "path") {
+        return { ...prev, points: [...(prev.points || []), worldX, worldY] };
+      } else if (prev.type === "line") {
+        const oldPoints = prev.points || [];
+        return { ...prev, points: [oldPoints[0], oldPoints[1], worldX, worldY] };
+      } else if (prev.type === "rect" || prev.type === "circle") {
+        const startX = prev.x;
+        const startY = prev.y;
+        return { ...prev, width: worldX - startX, height: worldY - startY };
+      }
+      return prev;
+    });
   };
 
   const handlePointerUp = () => {
@@ -275,6 +294,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
     if (activeYMapRef.current) {
       pushHistory();
       activeYMapRef.current = null;
+      setCurrentLine(null);
     }
   };
 
@@ -351,8 +371,11 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
           {/* Render new Yjs-streamed elements */}
           {yjsElements.map((el) => {
             if (!el.visible) return null;
+            if (currentLine && el.id === currentLine.id) return null;
             return <React.Fragment key={el.id}>{renderElement(el)}</React.Fragment>;
           })}
+          
+          {currentLine && renderElement(currentLine)}
           
           {/* Render Other Users' Cursors */}
           {Object.entries(otherCursors).map(([uid, cursor]) => (
