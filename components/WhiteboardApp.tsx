@@ -9,8 +9,6 @@ import StatusBar     from "./StatusBar";
 import LoadingScreen from "./LoadingScreen";
 import LoginScreen   from "./LoginScreen";
 import Dashboard     from "./Dashboard";
-import { auth, googleProvider, signInWithPopup } from "@/lib/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useBoardStore } from "@/store/board";
 
 type AppState = 'loading' | 'login' | 'dashboard' | 'board';
@@ -20,44 +18,31 @@ export default function WhiteboardApp() {
   useKeyboardShortcuts();
   
   const [appState, setAppState] = useState<AppState>('loading');
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(() => ({
+    uid: "anon_" + Math.random().toString(36).substring(2, 9),
+    displayName: "Guest_" + Math.random().toString(36).substring(2, 6).toUpperCase(),
+    photoURL: null
+  }));
   const [roomId, setRoomId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      // Wait for LoadingScreen to finish before transitioning
-      // But if we're already past loading, transition directly
-      setAppState(prev => prev === 'loading' ? prev : (u ? 'dashboard' : 'login'));
-    });
-    return () => unsub();
-  }, []);
-
   const handleLoadingDone = () => {
-    setAppState(user ? 'dashboard' : 'login');
+    setAppState('dashboard');
   };
 
   const handleLogin = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (e) {
-      console.error(e);
-      // Fallback for development if config is missing:
-      setUser({ displayName: "Dev User" });
-      setAppState('dashboard');
-    }
+    setAppState('dashboard');
   };
 
   const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      setRoomId(null);
-      setAppState('login');
-      // If we used a simulated user
-      if (user?.displayName === "Dev User") setUser(null); 
-    } catch (e) {
-      console.error(e);
-    }
+    // Generate new random guest info
+    setUser({
+      uid: "anon_" + Math.random().toString(36).substring(2, 9),
+      displayName: "Guest_" + Math.random().toString(36).substring(2, 6).toUpperCase(),
+      photoURL: null
+    });
+    setRoomId(null);
+    useBoardStore.getState().forceWipeBoard();
+    setAppState('dashboard');
   };
 
   const handleSolo = () => {
@@ -66,12 +51,14 @@ export default function WhiteboardApp() {
   };
 
   const handleCreateRoom = () => {
+    useBoardStore.getState().forceWipeBoard();
     const code = generateRoomCode();
     setRoomId(code);
     setAppState('board');
   };
 
   const handleJoinRoom = (code: string) => {
+    useBoardStore.getState().forceWipeBoard();
     setRoomId(code);
     setAppState('board');
   };

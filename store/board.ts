@@ -19,6 +19,7 @@ interface BoardStore extends BoardState {
   addElement: (el: WhiteboardElement) => void;
   updateElement: (id: string, patch: Partial<WhiteboardElement>) => void;
   clearBoard: () => void;
+  forceWipeBoard: () => void;
 
   setZoom: (zoom: number) => void;
   zoomIn: () => void;
@@ -98,6 +99,16 @@ export const useBoardStore = create<BoardStore>()(
           elements: [],
           historyIndex: pastElements.length + 1,
           historyLength: pastElements.length + 1,
+        });
+      },
+
+      forceWipeBoard: () => {
+        set({
+          elements: [],
+          pastElements: [],
+          futureElements: [],
+          historyIndex: 0,
+          historyLength: 0,
         });
       },
 
