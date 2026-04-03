@@ -80,7 +80,7 @@ export default function Notebook({ user, roomId }: NotebookProps) {
   ];
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center bg-[var(--bg-secondary)] overflow-y-auto no-scrollbar py-12 px-4" ref={containerRef}>
+      <div className="relative w-full h-full flex flex-col bg-[var(--bg-secondary)] overflow-y-auto no-scrollbar" ref={containerRef}>
       
       {/* Background Texture Logic */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
@@ -102,21 +102,15 @@ export default function Notebook({ user, roomId }: NotebookProps) {
 
       {roomId && <GhostCursors roomId={roomId} currentUser={user} containerRef={containerRef} />}
       
-      <div className="relative w-full max-w-4xl bg-[var(--bg-primary)] shadow-[0_20px_80px_-15px_rgba(249,115,22,0.1)] min-h-[100vh] border border-[var(--border-primary)] rounded-[2rem] overflow-hidden z-10 transition-all duration-500">
-        
-        {/* Luminous Orange Top Edge Accent */}
-        <div className="w-full h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 shadow-[0_0_20px_rgba(249,115,22,0.4)]" />
-
-        <ReactQuill
-          theme="snow"
-          value={internalValue}
-          onChange={handleChange}
-          modules={modules}
-          formats={formats}
-          className="h-full min-h-[800px] quill-modern"
-          placeholder="Start typing your collaborative notes here..."
-        />
-      </div>
+      <ReactQuill
+        theme="snow"
+        value={internalValue}
+        onChange={handleChange}
+        modules={modules}
+        formats={formats}
+        className="w-full h-full min-h-[100vh] quill-modern z-10"
+        placeholder="Start typing your collaborative notes here..."
+      />
     </div>
   );
 }

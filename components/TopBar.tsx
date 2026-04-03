@@ -103,24 +103,67 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
         </div>
         
         <div className="ml-auto px-4 flex items-center gap-4">
+          
+          {title === "Collaborative Notebook" && (
+            <div className="flex items-center gap-2 mr-4">
+              <button 
+                className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-secondary)] text-[var(--text-primary)] transition-all border border-[var(--border-primary)] shadow-sm hover:shadow"
+                onClick={() => {
+                  window.print();
+                }}
+                title="Export as PDF"
+              >
+                <FileDown size={14} className="text-red-500" /> PDF
+              </button>
+
+              <button 
+                className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-secondary)] text-[var(--text-primary)] transition-all border border-[var(--border-primary)] shadow-sm hover:shadow"
+                onClick={() => {
+                  const text = document.querySelector('.ql-editor')?.textContent || '';
+                  const blob = new Blob([text], { type: "text/plain" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "notebook.txt";
+                  a.click();
+                }}
+                title="Export as Plain Text"
+              >
+                <Save size={14} className="text-orange-500" /> TXT
+              </button>
+
+              <button 
+                className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-secondary)] text-[var(--text-primary)] transition-all border border-[var(--border-primary)] shadow-sm hover:shadow"
+                onClick={() => {
+                  const html = document.querySelector('.ql-editor')?.innerHTML || '';
+                  const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>";
+                  const footer = "</body></html>";
+                  const sourceHTML = header + html + footer;
+                  const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "notebook.doc";
+                  a.click();
+                }}
+                title="Export as MS Word"
+              >
+                <FileImage size={14} className="text-blue-500" /> DOCX
+              </button>
+            </div>
+          )}
+
           <button onClick={toggleTheme} className="text-[var(--text-primary)] hover:scale-110 hover:text-blue-500 transition-all ml-1 mr-3" title="Toggle Theme">
             {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
           </button>
           
           <div className="w-px h-6 bg-[var(--border-secondary)]" />
 
-          {/* Profile & Sign Out Panel */}
+          {/* Sign Out Panel */}
           <div className="flex items-center gap-3">
-            {user?.photoURL ? (
-              <img src={user.photoURL} alt="Avatar" className="w-7 h-7 rounded-full border border-[var(--border-secondary)]" />
-            ) : (
-              <div className="w-7 h-7 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--text-secondary)]">
-                <User size={14} />
-              </div>
-            )}
             <button 
               onClick={onSignOut}
-              className="text-[var(--text-secondary)] hover:text-[#e74c3c] transition-colors p-1"
+              className="text-[var(--text-secondary)] hover:text-[#e74c3c] transition-colors p-1 flex items-center justify-center bg-[var(--bg-secondary)] rounded-full w-8 h-8"
               title="Sign Out"
             >
               <LogOut size={16} />
@@ -130,8 +173,8 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
       </div>
 
       {/* Ribbon Row */}
-      <div className="flex items-center h-16 px-4 gap-1 overflow-x-auto no-scrollbar">
-        {title !== "Collaborative Notebook" && (
+      {title !== "Collaborative Notebook" && (
+        <div className="flex items-center h-16 px-4 gap-1 overflow-x-auto no-scrollbar border-b border-[var(--border-primary)] bg-[var(--bg-secondary)]">
           <>
             {/* File Tools */}
             <div className="relative">
@@ -215,83 +258,8 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
             {/* Erase Board explicitly */}
             <ToolBtn icon={Trash2} active={false} onClick={() => window.dispatchEvent(new Event('clear-board'))} title="Erase Board" color="text-[#e74c3c]" />
           </>
-        )}
-
-        {title === "Collaborative Notebook" && (
-          <div className="flex flex-1 justify-end items-center gap-4 ml-auto">
-            {/* The Text Editing Options from ReactQuill will be absolutely positioned into this ribbon area via CSS */}
-
-            <div className="relative z-[100]">
-              <ToolBtn 
-                icon={FileDown} 
-                title="Export Options" 
-                active={showExportMenu}
-                onClick={() => setShowExportMenu(!showExportMenu)} 
-              />
-              
-              <AnimatePresence>
-                {showExportMenu && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-12 right-0 w-48 bg-[var(--bg-primary)] border border-[var(--border-secondary)] rounded-xl shadow-2xl py-2 flex flex-col overflow-hidden"
-                  >
-                    <button 
-                      className="px-4 py-3 text-left text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-3 text-[var(--text-primary)]"
-                      onClick={() => {
-                        window.print();
-                        setShowExportMenu(false);
-                      }}
-                    >
-                      <FileDown size={16} className="text-red-500" /> Export as PDF
-                    </button>
-                    
-                    <button 
-                      className="px-4 py-3 text-left text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-3 text-[var(--text-primary)] border-t border-[var(--border-secondary)]"
-                      onClick={() => {
-                        const text = document.querySelector('.ql-editor')?.textContent || '';
-                        const blob = new Blob([text], { type: "text/plain" });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = "notebook.txt";
-                        a.click();
-                        setShowExportMenu(false);
-                      }}
-                    >
-                      <Save size={16} className="text-orange-500" /> Export as TXT
-                    </button>
-
-                    <button 
-                      className="px-4 py-3 text-left text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-3 text-[var(--text-primary)] border-t border-[var(--border-secondary)]"
-                      onClick={() => {
-                        const html = document.querySelector('.ql-editor')?.innerHTML || '';
-                        const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>";
-                        const footer = "</body></html>";
-                        const sourceHTML = header + html + footer;
-                        const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = "notebook.doc";
-                        a.click();
-                        setShowExportMenu(false);
-                      }}
-                    >
-                      <FileImage size={16} className="text-blue-500" /> Export as DOCX
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-            
-            {showExportMenu && (
-              <div className="fixed inset-0 z-40" onClick={() => setShowExportMenu(false)} />
-            )}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </header>
   );
 }

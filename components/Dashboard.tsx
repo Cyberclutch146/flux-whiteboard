@@ -289,12 +289,12 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                 className="w-full flex justify-center mt-12"
               >
                 <div className="w-full relative shadow-2xl rounded-[2rem] overflow-hidden">
-                  <div className="absolute inset-0 bg-blue-500/10 backdrop-blur-md" />
-                  <div className="relative border border-blue-500/30 p-8 rounded-[2rem] bg-[var(--bg-secondary)]/80 backdrop-blur-2xl">
+                  <div className="absolute inset-0 bg-neutral-500/10 backdrop-blur-md" />
+                  <div className="relative border border-neutral-500/30 p-8 rounded-[2rem] bg-[var(--bg-secondary)]/80 backdrop-blur-2xl">
                     <div className="flex items-center justify-between mb-8">
                       <button 
                         onClick={() => setShowJoin(false)}
-                        className="text-[var(--text-muted)] hover:text-white transition-colors p-2 -ml-2 rounded-full hover:bg-white/10"
+                        className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors p-2 -ml-2 rounded-full hover:bg-[var(--text-muted)]/10"
                       >
                         <X size={20} />
                       </button>
@@ -310,7 +310,7 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                         value={joinCode}
                         onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                         placeholder="7-DIGIT CODE"
-                        className="w-full px-4 py-6 text-center text-4xl font-mono font-bold tracking-[0.3em] bg-[#000] border border-[#222] rounded-2xl focus:border-blue-500 focus:shadow-[0_0_30px_rgba(59,130,246,0.3)] focus:outline-none text-white placeholder-gray-800 uppercase transition-all"
+                        className="w-full px-4 py-6 text-center text-4xl font-mono font-bold tracking-[0.3em] bg-[#111] border border-[#333] rounded-2xl focus:border-orange-500 focus:shadow-[0_0_30px_rgba(249,115,22,0.3)] focus:outline-none text-[#f3f4f6] placeholder-neutral-700 uppercase transition-all"
                         autoFocus
                       />
                       <motion.button
