@@ -113,7 +113,7 @@ export default function Navbar() {
               <circle cx="8" cy="8" r="2.5" fill="white" />
             </svg>
           </div>
-          <span className="font-bold text-[15px] tracking-tight text-text-primary">Flux</span>
+          <span className="font-bold text-[15px] tracking-tight text-text-primary">SYNQ</span>
         </div>
 
         {/* Divider */}

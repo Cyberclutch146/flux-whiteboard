@@ -8,6 +8,8 @@ import TextPressure from "./TextPressure";
 // @ts-ignore
 import RotatingText from "./RotatingText";
 
+const RotatingTextAny = RotatingText as any;
+
 export default function LoadingScreen({ onDone }: { onDone: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -23,7 +25,7 @@ export default function LoadingScreen({ onDone }: { onDone: () => void }) {
       className="absolute inset-0 z-[100] bg-[var(--bg-primary)] flex flex-col items-center justify-center overflow-hidden"
     >
       {/* Dynamic Grid Background - Changes based on light/dark mode css vars automatically if we use currentcolor or distinct stroke */}
-      <div className="absolute inset-0 opacity-20 dark:opacity-[0.03]">
+      <div className="absolute inset-0 opacity-20 dark:opacity-10">
         <ShapeGrid 
           speed={0.4}
           squareSize={50}
@@ -77,8 +79,7 @@ export default function LoadingScreen({ onDone }: { onDone: () => void }) {
               minFontSize={80}
             />
           </div>
-          {/* @ts-ignore */}
-          <RotatingText
+          <RotatingTextAny
             texts={['SPATIAL BOARD', 'COLLECTIVE MIND', 'RICH NOTEBOOK', 'SYSTEM ARCHITECTURE']}
             mainClassName="px-6 bg-[var(--text-primary)] text-[var(--bg-primary)] overflow-hidden py-2 justify-center rounded-sm text-xl font-black uppercase tracking-[0.3em] shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
             staggerFrom={"last"}
@@ -90,6 +91,7 @@ export default function LoadingScreen({ onDone }: { onDone: () => void }) {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             rotationInterval={2500}
           />
+
         </motion.div>
 
         {/* Cinematic Loading Bar */}

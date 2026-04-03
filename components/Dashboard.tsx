@@ -357,46 +357,54 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
             }}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-[var(--bg-primary)] border border-[var(--border-primary)] shadow-2xl rounded-3xl p-8 max-w-md w-full relative overflow-hidden"
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-[var(--bg-primary)]/40 backdrop-blur-[40px] border border-white/10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-[40px] p-10 max-w-md w-full relative overflow-hidden"
             >
+              {/* Animated background glow */}
+              <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px] pointer-events-none" />
+              <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-orange-500/20 rounded-full blur-[80px] pointer-events-none" />
+              
               <button 
                 onClick={() => setShowConnectPanel(false)}
-                className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                className="absolute top-6 right-6 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors p-2 hover:bg-white/5 rounded-full z-20"
               >
                 <X size={20} />
               </button>
               
-              <div className="flex flex-col items-center mb-6">
-                <div className="w-24 h-24 rounded-full overflow-hidden shadow-lg border-4 border-[var(--bg-secondary)] mb-4">
-                  <img src="/profile.png" alt="Swagata Ganguly" className="w-full h-full object-cover" />
+              <div className="flex flex-col items-center mb-10 relative z-10">
+                <motion.div 
+                  whileHover={{ scale: 1.05, rotate: 2 }}
+                  className="w-28 h-28 rounded-3xl overflow-hidden shadow-2xl border-2 border-white/10 mb-6 bg-gradient-to-br from-white/5 to-white/10 p-1"
+                >
+                  <img 
+                    src="/profile.png" 
+                    alt="Swagata Ganguly" 
+                    className="w-full h-full object-cover rounded-2xl"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=Swagata+Ganguly&background=5227FF&color=fff&size=128`;
+                    }}
+                  />
+                </motion.div>
+                <h2 className="text-3xl font-black text-[var(--text-primary)] tracking-tighter mb-1">Swagata Ganguly</h2>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <p className="text-sm text-[var(--text-muted)] font-bold uppercase tracking-[0.1em]">Available for projects</p>
                 </div>
-                <h2 className="text-2xl font-black text-[var(--text-primary)] tracking-tight">Swagata Ganguly</h2>
-                <p className="text-sm text-[var(--text-muted)] font-medium mt-1">Creative Engineer & Systems Architect</p>
               </div>
 
-              <div className="h-px w-full bg-[var(--border-primary)] my-6" />
-
-               <div className="grid grid-cols-2 gap-4">
-                <a href="https://github.com/Cyberclutch" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] hover:border-white/20 hover:bg-white/5 transition-all group">
-                  <Github className="text-[var(--text-muted)] group-hover:text-white transition-colors" size={20} />
-                  <span className="text-sm font-bold text-[var(--text-primary)]">GitHub</span>
-                </a>
-                <a href="https://www.linkedin.com/in/swagata-ganguly" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] hover:border-[#0a66c2]/50 hover:bg-[#0a66c2]/10 transition-all group">
-                  <Linkedin className="text-[var(--text-muted)] group-hover:text-[#0a66c2] transition-colors" size={20} />
-                  <span className="text-sm font-bold text-[var(--text-primary)]">LinkedIn</span>
-                </a>
-                <a href="https://instagram.com/blazing_stxrx" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] hover:border-[#e1306c]/50 hover:bg-[#e1306c]/10 transition-all group">
-                  <Instagram className="text-[var(--text-muted)] group-hover:text-[#e1306c] transition-colors" size={20} />
-                  <span className="text-sm font-bold text-[var(--text-primary)]">Instagram</span>
-                </a>
-                <a href="https://swagata-ganguly.vercel.app/" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-secondary)] hover:border-[#2ecc71]/50 hover:bg-[#2ecc71]/10 transition-all group">
-                  <Globe className="text-[var(--text-muted)] group-hover:text-[#2ecc71] transition-colors" size={20} />
-                  <span className="text-sm font-bold text-[var(--text-primary)]">Portfolio</span>
-                </a>
+              <div className="grid grid-cols-2 gap-3 relative z-10">
+                <SocialLink href="https://github.com/Cyberclutch" icon={<Github size={20}/>} label="GitHub" color="hover:bg-white/5" />
+                <SocialLink href="https://www.linkedin.com/in/swagata-ganguly" icon={<Linkedin size={20}/>} label="LinkedIn" color="hover:bg-[#0a66c2]/10" />
+                <SocialLink href="https://instagram.com/blazing_stxrx" icon={<Instagram size={20}/>} label="Instagram" color="hover:bg-[#e1306c]/10" />
+                <SocialLink href="https://swagata-ganguly.vercel.app/" icon={<Globe size={20}/>} label="Portfolio" color="hover:bg-[#2ecc71]/10" />
               </div>
+              
+              <p className="mt-8 text-center text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-[0.2em] opacity-40">
+                © 2026 Crafted with Passion
+              </p>
             </motion.div>
           </motion.div>
         )}
@@ -422,5 +430,21 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
         </div>
       </footer>
     </div>
+  );
+}
+
+function SocialLink({ href, icon, label, color }: { href: string; icon: React.ReactNode; label: string; color: string }) {
+  return (
+    <a 
+      href={href} 
+      target="_blank" 
+      rel="noreferrer" 
+      className={`flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 transition-all group ${color} hover:border-white/20`}
+    >
+      <div className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors scale-90 group-hover:scale-100 duration-300">
+        {icon}
+      </div>
+      <span className="text-sm font-bold text-[var(--text-primary)]">{label}</span>
+    </a>
   );
 }

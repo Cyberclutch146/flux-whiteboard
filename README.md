@@ -1,6 +1,6 @@
-# Flux Collaborative Workspace
+# SYNQ Collaborative Workspace
 
-Flux is a minimalist, high-performance real-time collaboration suite containing a robust Collaborative Whiteboard and a real-time Collaborative Notebook. It is built on modern web technologies including Next.js, Framer Motion, Zustand, and Firebase Realtime Database.
+SYNQ is a minimalist, high-performance real-time collaboration suite containing a robust Collaborative Whiteboard and a real-time Collaborative Notebook. It is built on modern web technologies including Next.js, Framer Motion, Zustand, and Firebase Realtime Database.
 
 ## Features
 
@@ -48,4 +48,4 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - **Rich Text**: React-Quill
 
 ## Design Architecture
-Flux is engineered around multi-state flow lifecycle paradigms: `Loading` -> `Login` -> `Selection` -> `Room` -> `Destruction`. It prioritizes highly performant UX, dynamically omitting heavy payload operations from non-critical render paths.
+SYNQ is engineered around multi-state flow lifecycle paradigms: `Loading` -> `Login` -> `Selection` -> `Room` -> `Destruction`. It prioritizes highly performant UX, dynamically omitting heavy payload operations from non-critical render paths.

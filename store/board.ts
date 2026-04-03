@@ -173,7 +173,7 @@ export const useBoardStore = create<BoardStore>()(
       },
     }),
     {
-      name: "flux-board-storage",
+      name: "synq-board-storage",
       // Exclude pastElements and futureElements from localStorage to prevent QuotaExceededError
       partialize: (state) => ({ 
         elements: state.elements, 
