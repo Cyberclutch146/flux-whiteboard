@@ -1,46 +1,79 @@
-/* Notebook CSS Overrides */
-.notebook-override {
+/**
+ * React Quill custom styling for Notebook Mode
+ */
+
+.quill-modern {
   display: flex;
   flex-direction: column;
+  border-radius: 0;
+  border: none !important;
 }
 
-.notebook-override .ql-toolbar {
+.quill-modern .ql-toolbar {
   border: none !important;
   border-bottom: 1px solid var(--border-primary) !important;
-  background: var(--bg-tertiary);
-  padding: 12px;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  background-color: var(--bg-secondary);
+  padding: 1rem 1.5rem !important;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.notebook-override .ql-container {
+.quill-modern .ql-container {
   border: none !important;
   flex: 1;
   font-family: inherit;
   font-size: 1.1rem;
+}
+
+.quill-modern .ql-editor {
+  padding: 3rem 4rem;
+  line-height: 1.8;
   color: var(--text-primary);
-  background: var(--bg-primary);
+  min-height: calc(100vh - 120px);
 }
 
-.notebook-override .ql-editor {
-  padding: 2rem 4rem;
-  line-height: 1.7;
+.quill-modern .ql-editor.ql-blank::before {
+  color: var(--text-muted);
+  font-style: normal;
+  left: 4rem;
 }
 
-/* Dark mode specific tweaks for Quill's default icons */
-.dark .notebook-override .ql-stroke {
+.quill-modern .ql-editor h1,
+.quill-modern .ql-editor h2,
+.quill-modern .ql-editor h3 {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  letter-spacing: -0.02em;
+}
+
+.quill-modern .ql-editor h1 { font-size: 2.5rem; }
+.quill-modern .ql-editor h2 { font-size: 2rem; }
+.quill-modern .ql-editor h3 { font-size: 1.5rem; }
+
+.quill-modern .ql-snow .ql-picker {
+  color: var(--text-primary);
+}
+
+.quill-modern .ql-snow .ql-stroke {
+  stroke: var(--text-secondary);
+}
+
+.quill-modern .ql-snow .ql-fill {
+  fill: var(--text-secondary);
+}
+
+.quill-modern .ql-toolbar button:hover .ql-stroke,
+.quill-modern .ql-toolbar button.ql-active .ql-stroke {
   stroke: var(--text-primary);
 }
-.dark .notebook-override .ql-fill {
+
+.quill-modern .ql-toolbar button:hover .ql-fill,
+.quill-modern .ql-toolbar button.ql-active .ql-fill {
   fill: var(--text-primary);
-}
-.dark .notebook-override .ql-picker {
-  color: var(--text-primary);
-}
-.dark .notebook-override .ql-picker-options {
-  background-color: var(--bg-secondary);
-  border-color: var(--border-primary);
-}
-.dark .notebook-override .ql-snow .ql-picker.ql-expanded .ql-picker-label {
-  color: var(--text-primary);
 }

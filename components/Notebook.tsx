@@ -2,27 +2,17 @@
 
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
-import "react-quill-new/dist/quill.snow.css";
 import { database } from "@/lib/firebase";
-import { ref, onValue, set, onDisconnect } from "firebase/database";
+import { ref, onValue, set } from "firebase/database";
 import { useBoardStore } from "@/store/board";
-import "./Notebook.css"; // We'll create custom dark-mode friendly CSS to override standard Quill
 
-// Dynamically import Quill to avoid SSR issues with `document` access
-const ReactQuill = dynamic(() => import("react-quill-new"), { 
+// Import react-quill-new dynamically to avoid SSR issues
+const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
-  loading: () => <div className="p-8 text-[var(--text-muted)] animate-pulse">Loading collaborative editor...</div>
+  loading: () => <div className="p-8 text-[var(--text-muted)] animate-pulse">Initializing Editor...</div>,
 });
-
-const modules = {
-  toolbar: [
-    [{ 'header': [1, 2, 3, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ 'color': [] }, { 'background': [] }],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    ['clean']
-  ],
-};
+import "react-quill-new/dist/quill.snow.css";
+import "./Notebook.css"; 
 
 interface NotebookProps {
   user: any;
@@ -31,67 +21,70 @@ interface NotebookProps {
 
 export default function Notebook({ user, roomId }: NotebookProps) {
   const { notebookContent, setNotebookContent } = useBoardStore();
-  const [value, setValue] = useState(notebookContent || "");
-  const initializedRef = useRef(false);
+  const [internalValue, setInternalValue] = useState(notebookContent || "");
+  
+  // Timer for debouncing firebase writes
+  const typingTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // Sync from Firebase
   useEffect(() => {
-    if (!roomId) {
-      // Local Mode: just use Zustand storage
-      setValue(notebookContent);
-      return;
-    }
+    if (!roomId) return;
 
-    const roomRef = ref(database, `rooms/${roomId}/notebookContent`);
-    
-    const unsubscribe = onValue(roomRef, (snapshot) => {
+    const notebookRef = ref(database, `rooms/${roomId}/notebookContent`);
+    const unsubscribe = onValue(notebookRef, (snapshot) => {
       const data = snapshot.val();
-      if (data !== null) {
-        // Warning: This simplistic approach might cause minor cursor jumping 
-        // if two people type inside the exact same millisecond, but works well normally.
-        setValue(data);
-        setNotebookContent(data);
+      if (data !== null && data !== internalValue) {
+        setInternalValue(data);
+        if (notebookContent !== data) {
+          setNotebookContent(data);
+        }
       }
     });
 
-    // Cleanup Room logic: when the last user disconnects, erase the room.
-    // We achieve this via Firebase onDisconnect for connections array.
-    const connRef = ref(database, `rooms/${roomId}/connections/${user.uid}`);
-    set(connRef, true);
-    onDisconnect(connRef).remove();
-    
-    // Attempting to delete the whole room if no one is left requires a Cloud Function 
-    // or tracking all active connection nodes and deleting `rooms/${roomId}` if null. 
-    // For now we rely on the connections map to represent presence.
+    return () => unsubscribe();
+  }, [roomId]); // Explicitly omitted internalValue to avoid infinite loops
 
-    return () => {
-      set(connRef, null); // remove connection when component unmounts
-      unsubscribe();
-    };
-  }, [roomId]);
-
+  // Handle changes
   const handleChange = (content: string, delta: any, source: string, editor: any) => {
-    // Only broadcast to Firebase or Zustand if the change was made by the USER (typing),
-    // NOT if the change came from the API (Firebase updating the value).
-    if (source === 'user') {
-      setValue(content);
-      setNotebookContent(content);
+    setInternalValue(content);
+    setNotebookContent(content);
+
+    if (roomId && source === 'user') {
+      if (typingTimer.current) clearTimeout(typingTimer.current);
       
-      if (roomId) {
-        const roomRef = ref(database, `rooms/${roomId}/notebookContent`);
-        set(roomRef, content);
-      }
+      typingTimer.current = setTimeout(() => {
+        set(ref(database, `rooms/${roomId}/notebookContent`), content);
+      }, 500); // 500ms debounce
     }
   };
 
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold", "italic", "underline", "strike",
+    "color", "background",
+    "list", "bullet",
+  ];
+
   return (
-    <div className="w-full h-full flex justify-center bg-[var(--bg-secondary)] overflow-y-auto">
-      <div className="w-full max-w-4xl bg-[var(--bg-primary)] shadow-2xl min-h-screen my-8 border border-[var(--border-primary)] rounded-xl overflow-hidden notebook-override">
-        <ReactQuill 
-          theme="snow" 
-          value={value} 
-          onChange={handleChange} 
+    <div className="w-full h-full flex flex-col items-center bg-[var(--bg-secondary)] overflow-y-auto no-scrollbar py-12 px-4">
+      <div className="w-full max-w-4xl bg-[var(--bg-primary)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] min-h-[100vh] border border-[var(--border-primary)] rounded-[2rem] overflow-hidden">
+        <ReactQuill
+          theme="snow"
+          value={internalValue}
+          onChange={handleChange}
           modules={modules}
-          className="h-full min-h-[800px]"
+          formats={formats}
+          className="h-full min-h-[800px] quill-modern"
           placeholder="Start typing your collaborative notes here..."
         />
       </div>

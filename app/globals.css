@@ -187,3 +187,19 @@ input:focus-visible {
 .cursor-grab      { cursor: grab; }
 .cursor-grabbing  { cursor: grabbing; }
 .cursor-text-tool { cursor: text; }
+
+/* Custom Animations */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s infinite ease-in-out;
+}
