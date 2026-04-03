@@ -35,6 +35,8 @@ export interface BaseElement {
   locked: boolean;
   visible: boolean;
   label: string;
+  points?: number[]; // For lines and paths
+  text?: string;     // For text nodes
 }
 
 export type WhiteboardElement = BaseElement;
