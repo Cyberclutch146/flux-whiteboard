@@ -6,6 +6,8 @@ import { database } from "@/lib/firebase";
 import { ref, onValue, set } from "firebase/database";
 import { useBoardStore } from "@/store/board";
 import GhostCursors from "./GhostCursors";
+import ShapeGrid from "./ShapeGrid";
+import Noise from "./Noise";
 
 // Import react-quill-new dynamically to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill-new"), {
@@ -21,7 +23,7 @@ interface NotebookProps {
 }
 
 export default function Notebook({ user, roomId }: NotebookProps) {
-  const { notebookContent, setNotebookContent } = useBoardStore();
+  const { notebookContent, setNotebookContent, theme } = useBoardStore();
   const [internalValue, setInternalValue] = useState(notebookContent || "");
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -79,6 +81,25 @@ export default function Notebook({ user, roomId }: NotebookProps) {
 
   return (
     <div className="relative w-full h-full flex flex-col items-center bg-[var(--bg-secondary)] overflow-y-auto no-scrollbar py-12 px-4" ref={containerRef}>
+      
+      {/* Background Texture Logic */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {theme === 'light' ? (
+          <div className="absolute inset-0 opacity-20">
+            <ShapeGrid 
+              speed={0.4} squareSize={50} direction='diagonal' 
+              borderColor='var(--text-muted)' hoverFillColor='transparent' 
+              shape='square' hoverTrailAmount={0} 
+            />
+          </div>
+        ) : (
+          <Noise 
+            patternSize={250} patternScaleX={2} patternScaleY={2} 
+            patternRefreshInterval={2} patternAlpha={15} 
+          />
+        )}
+      </div>
+
       {roomId && <GhostCursors roomId={roomId} currentUser={user} containerRef={containerRef} />}
       
       <div className="relative w-full max-w-4xl bg-[var(--bg-primary)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] min-h-[100vh] border border-[var(--border-primary)] rounded-[2rem] overflow-hidden z-10">

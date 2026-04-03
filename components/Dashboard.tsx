@@ -72,16 +72,24 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       </div>
 
       {/* Top Header - Micro-Interaction Profile */}
-      <header className="relative z-50 flex justify-end items-center w-full px-8 py-6">
-        <div className="relative group">
+      <header className="absolute top-0 right-0 z-50 p-6 lg:p-10 pointer-events-none flex items-center justify-end gap-3">
+        
+        {/* Theme Toggle Button (Standalone) */}
+        <button 
+          onClick={toggleTheme}
+          className="relative w-12 h-12 rounded-full bg-[var(--bg-primary)]/80 backdrop-blur-md border border-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] pointer-events-auto transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+        >
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            {theme === 'light' ? <Moon size={20} className="ml-[1px]" /> : <Sun size={20} className="ml-[1px]" />}
+          </div>
+        </button>
+
+        <div className="relative group pointer-events-auto">
           <button 
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-3 pl-2 pr-4 py-1.5 bg-transparent border border-transparent hover:border-[var(--border-secondary)] hover:bg-[var(--bg-secondary)] rounded-full transition-all duration-300 text-[var(--text-secondary)] hover:text-[var(--text-primary)] shadow-none hover:shadow-xl hover:shadow-black/5"
+            className="flex items-center gap-3 pl-4 pr-5 py-2.5 bg-[var(--bg-primary)]/80 backdrop-blur-md border border-[var(--border-secondary)] hover:bg-[var(--bg-secondary)] rounded-full transition-all duration-300 text-[var(--text-secondary)] hover:text-[var(--text-primary)] shadow-xl hover:shadow-2xl"
           >
-            <div className="w-8 h-8 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center border border-[var(--border-secondary)]">
-              {theme === 'light' ? <Sun size={14} className="text-orange-400"/> : <Moon size={14} className="text-blue-400"/>}
-            </div>
-            <span className="font-semibold tracking-wide text-xs hidden sm:block uppercase">
+            <span className="font-semibold tracking-wide text-xs uppercase">
               {user?.displayName || "Guest"}
             </span>
             <ArrowRight size={14} className={`transition-transform duration-300 ${menuOpen ? 'rotate-90' : 'rotate-0'}`} />
@@ -93,26 +101,14 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute top-14 right-0 w-56 bg-[var(--bg-primary)]/80 backdrop-blur-xl border border-[var(--border-primary)] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] rounded-2xl p-2 flex flex-col gap-1 overflow-hidden"
+                className="absolute top-14 right-0 w-48 bg-[var(--bg-primary)]/90 backdrop-blur-xl border border-[var(--border-secondary)] shadow-2xl rounded-2xl p-2 flex flex-col gap-1 overflow-hidden"
               >
                 <button 
-                  onClick={toggleTheme}
-                  className="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-[var(--bg-secondary)] text-sm font-semibold text-[var(--text-primary)] transition-colors"
-                >
-                  <span className="flex items-center gap-3">
-                    {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-                    Theme
-                  </span>
-                  <span className="text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-[0.2em]">{theme}</span>
-                </button>
-                <button 
                   onClick={onSignOut}
-                  className="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-[#e74c3c]/10 text-sm font-semibold text-[#e74c3c] transition-colors"
+                  className="w-full flex items-center justify-start gap-3 px-3 py-3 rounded-xl hover:bg-[#e74c3c]/10 text-sm font-bold text-[#e74c3c] transition-colors"
                 >
-                  <span className="flex items-center gap-3">
-                    <LogOut size={18} />
-                    Sign Out
-                  </span>
+                  <LogOut size={16} />
+                  Sign Out
                 </button>
               </motion.div>
             )}
@@ -125,7 +121,7 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
         
         {/* Left Col: Expressive Typography Hero */}
         <div className="flex-1 flex flex-col items-start justify-center min-w-[300px] pt-12 lg:pt-0">
-          <div className="relative w-full overflow-visible h-[200px] pointer-events-auto">
+          <div className="relative w-full overflow-visible h-[280px] pointer-events-auto mb-10">
             {/* The dramatic background glow for the title */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[150%] bg-white/5 dark:bg-white/10 blur-[80px] rounded-[100%] pointer-events-none" />
             
@@ -166,37 +162,30 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                 transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
                 className="flex flex-col items-center gap-10 w-full"
               >
-                {/* Premium Segmented Slider Mode Toggle */}
-                <div className="relative p-2 flex bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-full w-full max-w-md mx-auto shadow-inner">
-                  {/* Dynamic absolute animated background pill */}
-                  <motion.div
-                    className="absolute top-2 bottom-2 w-[calc(50%-0.5rem)] bg-white dark:bg-[#1a1a1a] rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/5 z-0"
-                    initial={false}
-                    animate={{
-                      left: localMode === 'notebook' ? '0.5rem' : 'calc(50%)'
-                    }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-
-                  {/* Slider Buttons */}
+                {/* Premium Restyled Distinct Buttons */}
+                <div className="w-full flex items-center justify-center gap-4 max-w-md mx-auto">
                   <button
                     onClick={() => setLocalMode('notebook')}
-                    className={`relative z-10 w-1/2 flex items-center justify-center gap-2 py-4 rounded-full text-sm font-bold tracking-wide transition-colors duration-300 ${
-                      localMode === 'notebook' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
+                    className={`flex-1 relative overflow-hidden flex flex-col items-center justify-center gap-2 p-6 rounded-[2rem] transition-all duration-300 border-2 ${
+                      localMode === 'notebook' 
+                        ? 'bg-blue-500/10 border-blue-500/50 shadow-inner' 
+                        : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/10 dark:hover:border-white/10'
                     }`}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
-                    Notebook
+                    <svg className={localMode === 'notebook' ? 'text-blue-500' : 'text-gray-400'} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
+                    <span className={`text-sm font-bold tracking-wide ${localMode === 'notebook' ? 'text-blue-600 dark:text-blue-400 drop-shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}>Notebook</span>
                   </button>
 
                   <button
                     onClick={() => setLocalMode('board')}
-                    className={`relative z-10 w-1/2 flex items-center justify-center gap-2 py-4 rounded-full text-sm font-bold tracking-wide transition-colors duration-300 ${
-                      localMode === 'board' ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
+                    className={`flex-1 relative overflow-hidden flex flex-col items-center justify-center gap-2 p-6 rounded-[2rem] transition-all duration-300 border-2 ${
+                      localMode === 'board' 
+                        ? 'bg-orange-500/10 border-orange-500/50 shadow-inner' 
+                        : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/10 dark:hover:border-white/10'
                     }`}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
-                    Whiteboard
+                    <svg className={localMode === 'board' ? 'text-orange-500' : 'text-gray-400'} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
+                    <span className={`text-sm font-bold tracking-wide ${localMode === 'board' ? 'text-orange-600 dark:text-orange-400 drop-shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}>Whiteboard</span>
                   </button>
                 </div>
 
@@ -222,7 +211,7 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                   className={`mt-4 px-12 py-5 rounded-full font-black text-lg tracking-wide uppercase transition-all duration-500 shadow-xl border ${
                     localMode === 'notebook' 
                     ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/30 border-blue-500' 
-                    : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-500/30 border-orange-500'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/30 border-emerald-500'
                   }`}
                 >
                   Enter Workspace
@@ -344,68 +333,56 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
         </div>
       </main>
 
-      {/* Connect With Me Modal */}
+      {/* Minimalistic Connect With Me Modal */}
       <AnimatePresence>
         {showConnectPanel && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 pointer-events-auto"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setShowConnectPanel(false);
-            }}
+            className="fixed inset-0 z-[9999] select-none"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-[var(--bg-primary)]/40 backdrop-blur-[40px] border border-white/10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-[40px] p-10 max-w-md w-full relative overflow-hidden"
-            >
-              {/* Animated background glow */}
-              <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px] pointer-events-none" />
-              <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-orange-500/20 rounded-full blur-[80px] pointer-events-none" />
-              
-              <button 
-                onClick={() => setShowConnectPanel(false)}
-                className="absolute top-6 right-6 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors p-2 hover:bg-white/5 rounded-full z-20"
+            {/* Dark crisp backdrop */}
+            <div 
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm pointer-events-auto" 
+              onClick={() => setShowConnectPanel(false)}
+            />
+            
+            {/* Centered Modal Content precisely via absolute positioning instead of flex */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[360px] pointer-events-none px-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                className="bg-[var(--bg-primary)] border border-[var(--border-secondary)] shadow-2xl rounded-3xl p-8 relative overflow-hidden pointer-events-auto"
               >
-                <X size={20} />
-              </button>
-              
-              <div className="flex flex-col items-center mb-10 relative z-10">
-                <motion.div 
-                  whileHover={{ scale: 1.05, rotate: 2 }}
-                  className="w-28 h-28 rounded-3xl overflow-hidden shadow-2xl border-2 border-white/10 mb-6 bg-gradient-to-br from-white/5 to-white/10 p-1"
-                >
-                  <img 
-                    src="/profile.png" 
-                    alt="Swagata Ganguly" 
-                    className="w-full h-full object-cover rounded-2xl"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=Swagata+Ganguly&background=5227FF&color=fff&size=128`;
-                    }}
-                  />
-                </motion.div>
-                <h2 className="text-3xl font-black text-[var(--text-primary)] tracking-tighter mb-1">Swagata Ganguly</h2>
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <p className="text-sm text-[var(--text-muted)] font-bold uppercase tracking-[0.1em]">Available for projects</p>
+                <div className="flex flex-col items-center mb-8 relative z-10">
+                  <div className="w-20 h-20 rounded-full overflow-hidden shadow-sm mb-4 border border-[var(--border-secondary)]">
+                    <img 
+                      src="/profile.png" 
+                      alt="Swagata Ganguly" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=Swagata+Ganguly&background=111&color=fff&size=128`;
+                      }}
+                    />
+                  </div>
+                  <h2 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">Swagata Ganguly</h2>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <p className="text-xs text-[var(--text-muted)] font-semibold uppercase tracking-widest">Available for hire</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3 relative z-10">
-                <SocialLink href="https://github.com/Cyberclutch" icon={<Github size={20}/>} label="GitHub" color="hover:bg-white/5" />
-                <SocialLink href="https://www.linkedin.com/in/swagata-ganguly" icon={<Linkedin size={20}/>} label="LinkedIn" color="hover:bg-[#0a66c2]/10" />
-                <SocialLink href="https://instagram.com/blazing_stxrx" icon={<Instagram size={20}/>} label="Instagram" color="hover:bg-[#e1306c]/10" />
-                <SocialLink href="https://swagata-ganguly.vercel.app/" icon={<Globe size={20}/>} label="Portfolio" color="hover:bg-[#2ecc71]/10" />
-              </div>
-              
-              <p className="mt-8 text-center text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-[0.2em] opacity-40">
-                © 2026 Crafted with Passion
-              </p>
-            </motion.div>
+                <div className="flex flex-col gap-2 relative z-10">
+                  <SocialLink href="https://github.com/Cyberclutch" icon={<Github size={16}/>} label="GitHub" />
+                  <SocialLink href="https://www.linkedin.com/in/swagata-ganguly" icon={<Linkedin size={16}/>} label="LinkedIn" />
+                  <SocialLink href="https://instagram.com/blazing_stxrx" icon={<Instagram size={16}/>} label="Instagram" />
+                  <SocialLink href="https://swagata-ganguly.vercel.app/" icon={<Globe size={16}/>} label="Portfolio" />
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -421,11 +398,11 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
             Designed by Swagata Ganguly
           </div>
           
-          <div className="flex items-center gap-6 pointer-events-auto bg-[var(--bg-primary)]/50 backdrop-blur-md px-6 py-2 rounded-full border border-[var(--border-primary)] shadow-sm">
-            <a href="https://github.com/Cyberclutch" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-white transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"><Github size={18} strokeWidth={2}/></a>
-            <a href="https://www.linkedin.com/in/swagata-ganguly" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#0a66c2] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(10,102,194,0.5)]"><Linkedin size={18} strokeWidth={2}/></a>
-            <a href="https://instagram.com/blazing_stxrx" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#e1306c] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(225,48,108,0.5)]"><Instagram size={18} strokeWidth={2}/></a>
-            <a href="https://swagata-ganguly.vercel.app/" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#2ecc71] transition-all hover:-translate-y-1 hover:drop-shadow-[0_0_10px_rgba(46,204,113,0.5)]"><Globe size={18} strokeWidth={2}/></a>
+          <div className="flex items-center gap-2 pointer-events-auto bg-[var(--bg-primary)]/50 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-primary)] shadow-sm">
+            <motion.a whileHover={{ scale: 1.15, y: -2 }} href="https://github.com/Cyberclutch" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-white transition-all p-2 mx-1"><Github size={18} strokeWidth={2.5}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -2 }} href="https://www.linkedin.com/in/swagata-ganguly" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#0a66c2] transition-all p-2 mx-1"><Linkedin size={18} strokeWidth={2.5}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -2 }} href="https://instagram.com/blazing_stxrx" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#e1306c] transition-all p-2 mx-1"><Instagram size={18} strokeWidth={2.5}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -2 }} href="https://swagata-ganguly.vercel.app/" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#2ecc71] transition-all p-2 mx-1"><Globe size={18} strokeWidth={2.5}/></motion.a>
           </div>
         </div>
       </footer>
@@ -433,18 +410,18 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
   );
 }
 
-function SocialLink({ href, icon, label, color }: { href: string; icon: React.ReactNode; label: string; color: string }) {
+function SocialLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
   return (
     <a 
       href={href} 
       target="_blank" 
       rel="noreferrer" 
-      className={`flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 transition-all group ${color} hover:border-white/20`}
+      className="flex items-center justify-between px-5 py-4 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--border-secondary)] transition-colors group"
     >
-      <div className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors scale-90 group-hover:scale-100 duration-300">
+      <span className="text-sm font-semibold text-[var(--text-primary)]">{label}</span>
+      <div className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors group-hover:scale-110 duration-300">
         {icon}
       </div>
-      <span className="text-sm font-bold text-[var(--text-primary)]">{label}</span>
     </a>
   );
 }

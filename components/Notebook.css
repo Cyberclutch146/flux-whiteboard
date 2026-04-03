@@ -42,19 +42,43 @@
   left: 4rem;
 }
 
+.quill-modern .ql-editor::selection {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
 .quill-modern .ql-editor h1,
 .quill-modern .ql-editor h2,
 .quill-modern .ql-editor h3 {
   color: var(--text-primary);
-  font-weight: 700;
+  font-weight: 800;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
   letter-spacing: -0.02em;
+  position: relative;
 }
 
 .quill-modern .ql-editor h1 { font-size: 2.5rem; }
 .quill-modern .ql-editor h2 { font-size: 2rem; }
-.quill-modern .ql-editor h3 { font-size: 1.5rem; }
+.quill-modern .ql-editor h3 { font-size: 1.5rem; color: #3b82f6; } /* Blue Accent for H3 */
+
+.quill-modern .ql-editor blockquote {
+  border-left: 4px solid #8b5cf6; /* Purple accent */
+  padding-left: 1.5rem;
+  margin-left: 0;
+  color: var(--text-muted);
+  font-style: italic;
+  background: linear-gradient(to right, rgba(139, 92, 246, 0.05), transparent);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.quill-modern .ql-editor a {
+  color: #ec4899; /* Pink accent */
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 
 .quill-modern .ql-snow .ql-picker {
   color: var(--text-primary);
@@ -62,18 +86,25 @@
 
 .quill-modern .ql-snow .ql-stroke {
   stroke: var(--text-secondary);
+  transition: all 0.2s ease;
 }
 
 .quill-modern .ql-snow .ql-fill {
   fill: var(--text-secondary);
+  transition: all 0.2s ease;
 }
 
 .quill-modern .ql-toolbar button:hover .ql-stroke,
 .quill-modern .ql-toolbar button.ql-active .ql-stroke {
-  stroke: var(--text-primary);
+  stroke: #3b82f6; /* Blue hover transition */
 }
 
 .quill-modern .ql-toolbar button:hover .ql-fill,
 .quill-modern .ql-toolbar button.ql-active .ql-fill {
-  fill: var(--text-primary);
+  fill: #3b82f6; /* Blue hover transition */
+}
+
+.quill-modern .ql-toolbar .ql-active {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-radius: 4px;
 }

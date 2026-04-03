@@ -22,7 +22,7 @@ export default function LoadingScreen({ onDone }: { onDone: () => void }) {
     <motion.div
       exit={{ opacity: 0, scale: 1.05, filter: "blur(20px)" }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="absolute inset-0 z-[100] bg-[var(--bg-primary)] flex flex-col items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-[100] bg-[var(--bg-primary)] flex flex-col items-center justify-center overflow-hidden"
     >
       {/* Dynamic Grid Background - Changes based on light/dark mode css vars automatically if we use currentcolor or distinct stroke */}
       <div className="absolute inset-0 opacity-20 dark:opacity-10">
@@ -40,7 +40,7 @@ export default function LoadingScreen({ onDone }: { onDone: () => void }) {
       <div className="absolute inset-0 z-[1] pointer-events-none mix-blend-overlay opacity-20 dark:opacity-40" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')", backgroundRepeat: 'repeat' }} />
       
       {/* Orb Background - Hidden on small screens (mobile) */}
-      <div className="absolute top-0 left-0 w-full h-full z-[2] hidden md:block opacity-70 pointer-events-none">
+      <div className="absolute top-0 left-0 w-full h-full z-[2] hidden md:block opacity-70 pointer-events-none flex items-center justify-center">
         <Orb 
           hoverIntensity={2}
           rotateOnHover
@@ -56,15 +56,15 @@ export default function LoadingScreen({ onDone }: { onDone: () => void }) {
 
       <div 
         ref={containerRef} 
-        className="relative z-10 flex flex-col items-center pointer-events-none gap-4"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full flex flex-col items-center justify-center pointer-events-none gap-8"
       >
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="text-[var(--text-primary)] text-6xl font-black mb-8 tracking-[0.1em] cursor-default flex flex-col items-center gap-6 drop-shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+          className="text-[var(--text-primary)] text-6xl font-black mb-8 tracking-[0.1em] cursor-default flex flex-col items-center justify-center gap-12 drop-shadow-[0_0_30px_rgba(255,255,255,0.05)]"
         >
-          <div style={{ position: 'relative', width: '300px', height: '120px', pointerEvents: 'auto' }}>
+          <div style={{ position: 'relative', width: '300px', height: '180px', pointerEvents: 'auto' }}>
             {/* @ts-ignore */}
             <TextPressure
               text="SYNQ"
