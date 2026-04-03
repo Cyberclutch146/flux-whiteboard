@@ -102,7 +102,11 @@ export default function Notebook({ user, roomId }: NotebookProps) {
 
       {roomId && <GhostCursors roomId={roomId} currentUser={user} containerRef={containerRef} />}
       
-      <div className="relative w-full max-w-4xl bg-[var(--bg-primary)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] min-h-[100vh] border border-[var(--border-primary)] rounded-[2rem] overflow-hidden z-10">
+      <div className="relative w-full max-w-4xl bg-[var(--bg-primary)] shadow-[0_20px_80px_-15px_rgba(249,115,22,0.1)] min-h-[100vh] border border-[var(--border-primary)] rounded-[2rem] overflow-hidden z-10 transition-all duration-500">
+        
+        {/* Luminous Orange Top Edge Accent */}
+        <div className="w-full h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 shadow-[0_0_20px_rgba(249,115,22,0.4)]" />
+
         <ReactQuill
           theme="snow"
           value={internalValue}

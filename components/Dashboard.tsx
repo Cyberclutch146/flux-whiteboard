@@ -58,18 +58,20 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" />
       <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-[150px] pointer-events-none mix-blend-lighten" />
 
-      {/* Background ShapeGrid (Faint) */}
-      <div className="absolute inset-0 z-0 overflow-hidden opacity-10 pointer-events-none">
-        <ShapeGrid 
-          speed={0.3}
-          squareSize={60}
-          direction='diagonal'
-          borderColor='var(--border-secondary)'
-          hoverFillColor='var(--bg-tertiary)'
-          shape='square'
-          hoverTrailAmount={1}
-        />
-      </div>
+      {/* Background ShapeGrid (Light Mode Only) */}
+      {theme === 'light' && (
+        <div className="absolute inset-0 z-0 overflow-hidden opacity-10 pointer-events-none">
+          <ShapeGrid 
+            speed={0.3}
+            squareSize={60}
+            direction='diagonal'
+            borderColor='var(--border-secondary)'
+            hoverFillColor='var(--bg-tertiary)'
+            shape='square'
+            hoverTrailAmount={1}
+          />
+        </div>
+      )}
 
       {/* Top Header - Micro-Interaction Profile */}
       <header className="absolute top-0 right-0 z-50 p-6 lg:p-10 pointer-events-none flex items-center justify-end gap-3">
@@ -233,12 +235,10 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
 
                 <button
                   onClick={onSolo}
-                  className="group flex items-center justify-between w-full py-4 px-5 rounded-2xl border border-[var(--border-secondary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
+                  className="group flex items-center justify-between w-full py-4 px-6 rounded-2xl border border-[var(--border-secondary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
                 >
-                  <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 shrink-0 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
-                      <User size={20} className="group-hover:scale-110 transition-transform"/>
-                    </div>
+                  <div className="flex items-center gap-6">
+                    <User size={32} className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:scale-110 transition-all shrink-0" strokeWidth={1.5}/>
                     <div className="flex flex-col items-start justify-center text-left">
                       <h3 className="text-[17px] font-bold text-[var(--text-primary)] leading-none mb-1.5 tracking-tight">Solo Local</h3>
                       <p className="text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-[0.2em] leading-none">Private Env</p>
@@ -249,28 +249,28 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
 
                 <button
                   onClick={onCreateRoom}
-                  className="group flex items-center justify-between w-full py-4 px-5 rounded-2xl border border-[var(--border-primary)] bg-orange-600 hover:bg-orange-500 text-white transition-all shadow-xl shadow-orange-500/20"
+                  className={`group flex items-center justify-between w-full py-4 px-6 rounded-2xl border transition-all shadow-xl ${
+                    localMode === 'notebook'
+                      ? 'border-orange-500 bg-orange-600 hover:bg-orange-500 text-white shadow-orange-500/20'
+                      : 'border-teal-500 bg-teal-600 hover:bg-teal-500 text-white shadow-teal-500/20'
+                  }`}
                 >
-                  <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 shrink-0 rounded-xl bg-orange-700/50 flex items-center justify-center text-white">
-                      <FilePlus size={20} className="group-hover:scale-110 transition-transform"/>
-                    </div>
+                  <div className="flex items-center gap-6">
+                    <FilePlus size={32} strokeWidth={1.5} className={`group-hover:text-white group-hover:scale-110 transition-all shrink-0 ${localMode === 'notebook' ? 'text-orange-200' : 'text-teal-200'}`} />
                     <div className="flex flex-col items-start justify-center text-left">
                       <h3 className="text-[17px] font-bold text-white leading-none mb-1.5 tracking-tight">Create Room</h3>
-                      <p className="text-[10px] text-orange-200 font-mono uppercase tracking-[0.2em] leading-none">Multiplayer Node</p>
+                      <p className={`text-[10px] font-mono uppercase tracking-[0.2em] leading-none ${localMode === 'notebook' ? 'text-orange-200' : 'text-teal-200'}`}>Multiplayer Node</p>
                     </div>
                   </div>
-                  <ArrowRight size={20} className="text-orange-200 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-x-1" />
+                  <ArrowRight size={20} className={`group-hover:text-white transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-x-1 ${localMode === 'notebook' ? 'text-orange-200' : 'text-teal-200'}`} />
                 </button>
 
                 <button
                   onClick={() => setShowJoin(true)}
-                  className="group flex items-center justify-between w-full py-4 px-5 rounded-2xl border border-[var(--border-secondary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
+                  className="group flex items-center justify-between w-full py-4 px-6 rounded-2xl border border-[var(--border-secondary)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
                 >
-                  <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 shrink-0 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
-                      <Users size={20} className="group-hover:scale-110 transition-transform"/>
-                    </div>
+                  <div className="flex items-center gap-6">
+                    <Users size={32} className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:scale-110 transition-all shrink-0" strokeWidth={1.5}/>
                     <div className="flex flex-col items-start justify-center text-left">
                       <h3 className="text-[17px] font-bold text-[var(--text-primary)] leading-none mb-1.5 tracking-tight">Join Session</h3>
                       <p className="text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-[0.2em] leading-none">Via Code</p>
@@ -358,7 +358,7 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                 <div className="flex flex-col items-center mb-8 relative z-10">
                   <div className="w-20 h-20 rounded-full overflow-hidden shadow-sm mb-4 border border-[var(--border-secondary)]">
                     <img 
-                      src="/profile.png" 
+                      src="/IMG_20241031_180055789_HDR_PORTRAIT~2.jpg" 
                       alt="Swagata Ganguly" 
                       className="w-full h-full object-cover"
                       onError={(e) => {
@@ -374,10 +374,10 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                 </div>
 
                 <div className="flex flex-col gap-2 relative z-10">
-                  <SocialLink href="https://github.com/Cyberclutch" icon={<Github size={16}/>} label="GitHub" />
-                  <SocialLink href="https://www.linkedin.com/in/swagata-ganguly" icon={<Linkedin size={16}/>} label="LinkedIn" />
-                  <SocialLink href="https://instagram.com/blazing_stxrx" icon={<Instagram size={16}/>} label="Instagram" />
-                  <SocialLink href="https://swagata-ganguly.vercel.app/" icon={<Globe size={16}/>} label="Portfolio" />
+                  <SocialLink href="https://github.com/Cyberclutch146" icon={<Github size={16}/>} label="GitHub" />
+                  <SocialLink href="https://www.linkedin.com/in/swagata-ganguly-453aa6327/" icon={<Linkedin size={16}/>} label="LinkedIn" />
+                  <SocialLink href="https://www.instagram.com/undiagnosed.psycopath" icon={<Instagram size={16}/>} label="Instagram" />
+                  <SocialLink href="https://swagata-portfolio-amber.vercel.app" icon={<Globe size={16}/>} label="Portfolio" />
                 </div>
               </motion.div>
             </div>
@@ -386,21 +386,21 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       </AnimatePresence>
 
       {/* Elegant Footer glass panel */}
-      <footer className="absolute bottom-6 left-0 right-0 z-50 px-8 lg:px-16 pointer-events-none">
+      <footer className="absolute bottom-6 left-0 right-0 z-50 px-8 lg:px-16 pointer-events-none drop-shadow-xl">
         <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-[1400px] mx-auto gap-4 relative">
           <div 
             onClick={() => setShowConnectPanel(true)}
-            className="text-[11px] font-bold tracking-[0.2em] uppercase text-[var(--text-muted)] pointer-events-auto hover:text-[var(--text-primary)] transition-colors cursor-pointer relative group flex items-center gap-2 bg-[var(--bg-primary)]/50 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-primary)] shadow-sm hover:-translate-y-1"
+            className="text-[11px] font-bold tracking-[0.2em] uppercase text-[var(--text-muted)] pointer-events-auto hover:text-[var(--text-primary)] transition-colors cursor-pointer relative group flex items-center gap-2 bg-[var(--bg-primary)]/80 backdrop-blur-md px-5 py-3 rounded-full border border-[var(--border-primary)] shadow-sm hover:-translate-y-1"
           >
             <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
             Designed by Swagata Ganguly
           </div>
           
-          <div className="flex items-center gap-2 pointer-events-auto bg-[var(--bg-primary)]/50 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-primary)] shadow-sm">
-            <motion.a whileHover={{ scale: 1.15, y: -2 }} href="https://github.com/Cyberclutch" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-white transition-all p-2 mx-1"><Github size={18} strokeWidth={2.5}/></motion.a>
-            <motion.a whileHover={{ scale: 1.15, y: -2 }} href="https://www.linkedin.com/in/swagata-ganguly" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#0a66c2] transition-all p-2 mx-1"><Linkedin size={18} strokeWidth={2.5}/></motion.a>
-            <motion.a whileHover={{ scale: 1.15, y: -2 }} href="https://instagram.com/blazing_stxrx" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#e1306c] transition-all p-2 mx-1"><Instagram size={18} strokeWidth={2.5}/></motion.a>
-            <motion.a whileHover={{ scale: 1.15, y: -2 }} href="https://swagata-ganguly.vercel.app/" target="_blank" rel="noreferrer" className="text-[var(--text-muted)] hover:text-[#2ecc71] transition-all p-2 mx-1"><Globe size={18} strokeWidth={2.5}/></motion.a>
+          <div className="flex items-center gap-3 pointer-events-auto bg-[var(--bg-primary)]/80 backdrop-blur-md px-5 py-3 rounded-full border border-[var(--border-primary)] shadow-md">
+            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://github.com/Cyberclutch146" target="_blank" rel="noreferrer" className="text-[var(--text-primary)] hover:text-gray-400 transition-all p-1.5"><Github size={22} strokeWidth={2}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://www.linkedin.com/in/swagata-ganguly-453aa6327/" target="_blank" rel="noreferrer" className="text-[#0a66c2] hover:text-[#004182] transition-all p-1.5"><Linkedin size={22} strokeWidth={2}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://www.instagram.com/undiagnosed.psycopath" target="_blank" rel="noreferrer" className="text-[#e1306c] hover:text-[#b01e4a] transition-all p-1.5"><Instagram size={22} strokeWidth={2}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://swagata-portfolio-amber.vercel.app" target="_blank" rel="noreferrer" className="text-[#2ecc71] hover:text-[#27ae60] transition-all p-1.5"><Globe size={22} strokeWidth={2}/></motion.a>
           </div>
         </div>
       </footer>

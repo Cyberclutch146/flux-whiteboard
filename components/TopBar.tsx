@@ -68,7 +68,15 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
           
           <div className="flex items-center h-full text-[var(--text-primary)] text-[13px] font-medium border-l border-[var(--border-secondary)] ml-2">
             {title ? (
-              <span className="px-4 text-[var(--text-primary)] font-bold tracking-wide">{title}</span>
+              <span className={`px-4 font-bold tracking-wide ${
+                title.includes('Notebook') 
+                ? 'bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm' 
+                : title.includes('Whiteboard')
+                ? 'bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-teal-600 drop-shadow-sm'
+                : 'text-[var(--text-primary)]'
+              }`}>
+                {title}
+              </span>
             ) : roomId ? (
               <button 
                 onClick={handleCopyRoom}
@@ -210,37 +218,10 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
         )}
 
         {title === "Collaborative Notebook" && (
-          <div className="flex items-center gap-4 ml-4">
-            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold mr-2">File Operations:</span>
-            
-            <div className="relative">
-              <input 
-                type="file" 
-                accept=".txt,.doc,.docx" 
-                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" 
-                title="Open Document"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    const file = e.target.files[0];
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                      if (ev.target?.result) {
-                        const content = ev.target.result.toString();
-                        // Extremely simple: drop the text into the board store.
-                        // We wrap plain text in <p> tags so Quill renders it correctly.
-                        const htmlContent = content.split('\n').map(line => `<p>${line}</p>`).join('');
-                        useBoardStore.getState().setNotebookContent(htmlContent);
-                      }
-                    };
-                    reader.readAsText(file);
-                  }
-                  e.target.value = '';
-                }}
-              />
-              <ToolBtn icon={FolderOpen} active={false} title="Open Document" />
-            </div>
+          <div className="flex flex-1 justify-end items-center gap-4 ml-auto">
+            {/* The Text Editing Options from ReactQuill will be absolutely positioned into this ribbon area via CSS */}
 
-            <div className="relative">
+            <div className="relative z-[100]">
               <ToolBtn 
                 icon={FileDown} 
                 title="Export Options" 
@@ -254,7 +235,7 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-14 left-0 w-48 bg-[var(--bg-primary)] border border-[var(--border-secondary)] rounded-xl shadow-2xl py-2 z-50 flex flex-col overflow-hidden"
+                    className="absolute top-12 right-0 w-48 bg-[var(--bg-primary)] border border-[var(--border-secondary)] rounded-xl shadow-2xl py-2 flex flex-col overflow-hidden"
                   >
                     <button 
                       className="px-4 py-3 text-left text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-3 text-[var(--text-primary)]"
@@ -279,7 +260,7 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
                         setShowExportMenu(false);
                       }}
                     >
-                      <Save size={16} className="text-gray-500" /> Export as TXT
+                      <Save size={16} className="text-orange-500" /> Export as TXT
                     </button>
 
                     <button 

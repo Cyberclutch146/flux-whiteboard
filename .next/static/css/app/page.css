@@ -77,15 +77,18 @@
 }
 
 .quill-modern .ql-toolbar {
+  position: fixed;
+  top: 48px; /* Offset for TopBar top row */
+  left: 0;
+  width: calc(100vw - 200px); /* Leave space for export options on the right */
+  height: 64px;
+  z-index: 60;
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 1.5rem !important;
+  background-color: transparent !important;
   border: none !important;
-  border-bottom: 1px solid var(--border-primary) !important;
-  background-color: var(--bg-secondary);
-  padding: 1rem 1.5rem !important;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
@@ -132,22 +135,22 @@
 
 .quill-modern .ql-editor h1 { font-size: 2.5rem; }
 .quill-modern .ql-editor h2 { font-size: 2rem; }
-.quill-modern .ql-editor h3 { font-size: 1.5rem; color: #3b82f6; } /* Blue Accent for H3 */
+.quill-modern .ql-editor h3 { font-size: 1.5rem; color: #f97316; } /* Orange Accent for H3 */
 
 .quill-modern .ql-editor blockquote {
-  border-left: 4px solid #8b5cf6; /* Purple accent */
+  border-left: 4px solid #f97316; /* Orange accent */
   padding-left: 1.5rem;
   margin-left: 0;
   color: var(--text-muted);
   font-style: italic;
-  background: linear-gradient(to right, rgba(139, 92, 246, 0.05), transparent);
+  background: linear-gradient(to right, rgba(249, 115, 22, 0.05), transparent);
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   border-radius: 0 0.5rem 0.5rem 0;
 }
 
 .quill-modern .ql-editor a {
-  color: #ec4899; /* Pink accent */
+  color: #fb923c; /* Light Orange accent */
   text-decoration: underline;
   text-underline-offset: 4px;
 }
@@ -168,16 +171,16 @@
 
 .quill-modern .ql-toolbar button:hover .ql-stroke,
 .quill-modern .ql-toolbar button.ql-active .ql-stroke {
-  stroke: #3b82f6; /* Blue hover transition */
+  stroke: #f97316; /* Orange hover transition */
 }
 
 .quill-modern .ql-toolbar button:hover .ql-fill,
 .quill-modern .ql-toolbar button.ql-active .ql-fill {
-  fill: #3b82f6; /* Blue hover transition */
+  fill: #f97316; /* Orange hover transition */
 }
 
 .quill-modern .ql-toolbar .ql-active {
-  background: rgba(59, 130, 246, 0.1) !important;
+  background: rgba(249, 115, 22, 0.1) !important;
   border-radius: 4px;
 }
 
