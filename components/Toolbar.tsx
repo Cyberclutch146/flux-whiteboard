@@ -17,8 +17,9 @@ const TOOLS: Tool[] = [
   { id: "rect",   label: "Rectangle", shortcut: "R", group: "shape" },
   { id: "circle", label: "Circle",    shortcut: "O", group: "shape" },
   { id: "line",   label: "Line",      shortcut: "L", group: "shape" },
-  { id: "pencil", label: "Pencil",    shortcut: "P", group: "draw" },
-  { id: "text",   label: "Text",      shortcut: "T", group: "draw" },
+  { id: "eraser", label: "Eraser", shortcut: "E", group: "draw" },
+  { id: "pencil", label: "Pencil", shortcut: "P", group: "draw" },
+  { id: "text",   label: "Text",   shortcut: "T", group: "draw" },
 ];
 
 const ICONS: Record<ToolId, React.ReactNode> = {

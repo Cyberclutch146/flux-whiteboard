@@ -17,9 +17,9 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
     >
       <div 
         ref={containerRef} 
-        className="relative z-10 flex flex-col items-center pointer-events-auto gap-8"
+        className="relative z-10 flex flex-col items-center pointer-events-auto gap-20"
       >
-        <div className="relative w-[300px] h-[100px] pointer-events-auto">
+        <div className="relative w-[300px] h-[150px] pointer-events-auto">
           {/* @ts-ignore */}
           <TextPressure
             text="SYNQ"

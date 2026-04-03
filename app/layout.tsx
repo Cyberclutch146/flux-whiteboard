@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "SYNQ — Collaborative Suite",
   description: "Real-time structured dual workspace built for humans",
   icons: {
-    icon: "/logo.png",
+    icon: "/favicon.png",
   },
 };
 
