@@ -58,8 +58,12 @@ export interface Collaborator {
 
 export type ConnectionStatus = "connected" | "saving" | "saved" | "offline";
 
+export type AppMode = 'board' | 'notebook' | null;
+
 export interface BoardState {
   name: string;
+  mode: AppMode;
+  notebookContent: string;
   selectedTool: ToolId;
   currentColor: string;
   currentWidth: number;

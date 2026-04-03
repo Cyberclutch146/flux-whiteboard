@@ -5,9 +5,12 @@ import type {
   ToolId,
   WhiteboardElement,
   ConnectionStatus,
+  AppMode
 } from "@/types";
 
 interface BoardStore extends BoardState {
+  setMode: (mode: AppMode) => void;
+  setNotebookContent: (html: string) => void;
   setBoardName: (name: string) => void;
   setConnectionStatus: (status: ConnectionStatus) => void;
   setSelectedTool: (tool: ToolId) => void;
@@ -43,6 +46,8 @@ export const useBoardStore = create<BoardStore>()(
   persist(
     (set, get) => ({
       name: "demo.lorien",
+      mode: null,
+      notebookContent: "",
       selectedTool: "pencil",
       currentColor: "#333333",
       currentWidth: 4,
@@ -61,6 +66,8 @@ export const useBoardStore = create<BoardStore>()(
       theme: 'light',
       toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
 
+      setMode: (mode) => set({ mode }),
+      setNotebookContent: (html) => set({ notebookContent: html }),
       setBoardName: (name) => set({ name }),
       setConnectionStatus: (connectionStatus) => set({ connectionStatus }),
 
@@ -109,6 +116,7 @@ export const useBoardStore = create<BoardStore>()(
           futureElements: [],
           historyIndex: 0,
           historyLength: 0,
+          notebookContent: ""
         });
       },
 
@@ -170,7 +178,8 @@ export const useBoardStore = create<BoardStore>()(
       partialize: (state) => ({ 
         elements: state.elements, 
         name: state.name,
-        theme: state.theme
+        theme: state.theme,
+        notebookContent: state.notebookContent
       }),
     }
   )

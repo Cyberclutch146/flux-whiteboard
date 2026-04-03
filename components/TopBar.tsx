@@ -34,7 +34,7 @@ function Sep() {
   return <div className="w-px h-8 bg-[var(--border-secondary)] mx-3 shrink-0" />;
 }
 
-export default function TopBar({ roomId, user, onBackToHome, onSignOut }: { roomId: string | null; user: any; onBackToHome: () => void; onSignOut: () => void }) {
+export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }: { roomId: string | null; user: any; title?: string; onBackToHome: () => void; onSignOut: () => void }) {
   const [copied, setCopied] = useState(false);
   const { 
     selectedTool, setSelectedTool,
@@ -66,7 +66,9 @@ export default function TopBar({ roomId, user, onBackToHome, onSignOut }: { room
           </button>
           
           <div className="flex items-center h-full text-[var(--text-primary)] text-[13px] font-medium border-l border-[var(--border-secondary)] ml-2">
-            {roomId ? (
+            {title ? (
+              <span className="px-4 text-[var(--text-primary)] font-bold tracking-wide">{title}</span>
+            ) : roomId ? (
               <button 
                 onClick={handleCopyRoom}
                 className="flex items-center gap-2 px-4 hover:bg-[var(--bg-secondary)] h-full transition-colors group"
@@ -77,6 +79,16 @@ export default function TopBar({ roomId, user, onBackToHome, onSignOut }: { room
               </button>
             ) : (
               <span className="px-4 text-[var(--text-muted)]">Solo Session</span>
+            )}
+            {title && roomId && (
+              <button 
+                onClick={handleCopyRoom}
+                className="flex items-center gap-2 px-4 border-l border-[var(--border-secondary)] hover:bg-[var(--bg-secondary)] h-full transition-colors group"
+                title="Copy Room ID"
+              >
+                Room: <span className="font-mono font-bold tracking-wider">{roomId}</span>
+                {copied ? <Check size={14} className="text-[#2ecc71]" /> : <Copy size={14} className="text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors" />}
+              </button>
             )}
           </div>
         </div>
@@ -110,88 +122,127 @@ export default function TopBar({ roomId, user, onBackToHome, onSignOut }: { room
 
       {/* Ribbon Row */}
       <div className="flex items-center h-16 px-4 gap-1 overflow-x-auto no-scrollbar">
-        {/* File Tools */}
-        <div className="relative">
-          <input 
-            type="file" 
-            accept="image/*" 
-            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" 
-            title="Import Image"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                  if (ev.target?.result) {
-                    window.dispatchEvent(new CustomEvent('import-image', { detail: ev.target.result }));
+        {title !== "Collaborative Notebook" && (
+          <>
+            {/* File Tools */}
+            <div className="relative">
+              <input 
+                type="file" 
+                accept="image/*" 
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" 
+                title="Import Image"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      if (ev.target?.result) {
+                        window.dispatchEvent(new CustomEvent('import-image', { detail: ev.target.result }));
+                      }
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
                   }
-                };
-                reader.readAsDataURL(e.target.files[0]);
-              }
-              e.target.value = '';
-            }}
-          />
-          <ToolBtn icon={FileImage} active={false} title="Import Image" />
-        </div>
-        <ToolBtn icon={Save} title="Save to Cloud" />
-        <ToolBtn icon={FileImage} title="Export PNG" onClick={() => window.dispatchEvent(new CustomEvent('export-board', { detail: 'png' }))} />
-        <ToolBtn icon={FileDown} title="Export PDF" onClick={() => window.dispatchEvent(new CustomEvent('export-board', { detail: 'pdf' }))} />
+                  e.target.value = '';
+                }}
+              />
+              <ToolBtn icon={FileImage} active={false} title="Import Image" />
+            </div>
+            <ToolBtn icon={Save} title="Save to Cloud" />
+            <ToolBtn icon={FileImage} title="Export PNG" onClick={() => window.dispatchEvent(new CustomEvent('export-board', { detail: 'png' }))} />
+            <ToolBtn icon={FileDown} title="Export PDF" onClick={() => window.dispatchEvent(new CustomEvent('export-board', { detail: 'pdf' }))} />
 
-        <Sep />
+            <Sep />
 
-        <ToolBtn icon={Undo2} title="Undo" onClick={undo} color={canUndo ? "text-[var(--text-secondary)]" : "text-[var(--border-secondary)]"} />
-        <ToolBtn icon={Redo2} title="Redo" onClick={redo} color={canRedo ? "text-[var(--text-secondary)]" : "text-[var(--border-secondary)]"} />
+            <ToolBtn icon={Undo2} title="Undo" onClick={undo} color={canUndo ? "text-[var(--text-secondary)]" : "text-[var(--border-secondary)]"} />
+            <ToolBtn icon={Redo2} title="Redo" onClick={redo} color={canRedo ? "text-[var(--text-secondary)]" : "text-[var(--border-secondary)]"} />
 
-        <Sep />
 
-        {/* Draw Tools */}
-        <ToolBtn icon={MousePointer2} active={selectedTool === "select"} onClick={() => setSelectedTool("select")} title="Select" />
-        <ToolBtn icon={Pencil} active={selectedTool === "pencil"} onClick={() => setSelectedTool("pencil")} title="Pencil" />
-        <ToolBtn icon={Minus} active={selectedTool === "line"} onClick={() => setSelectedTool("line")} title="Line" />
-        <ToolBtn icon={Square} active={selectedTool === "rect"} onClick={() => setSelectedTool("rect")} title="Rectangle" />
-        <ToolBtn icon={Circle} active={selectedTool === "circle"} onClick={() => setSelectedTool("circle")} title="Circle" />
-        <ToolBtn icon={Type} active={selectedTool === "text"} onClick={() => setSelectedTool("text")} title="Text" />
-        <ToolBtn icon={Eraser} active={selectedTool === "eraser"} onClick={() => setSelectedTool("eraser")} title="Eraser" />
+            {/* Draw Tools */}
+            <ToolBtn icon={MousePointer2} active={selectedTool === "select"} onClick={() => setSelectedTool("select")} title="Select" />
+            <ToolBtn icon={Pencil} active={selectedTool === "pencil"} onClick={() => setSelectedTool("pencil")} title="Pencil" />
+            <ToolBtn icon={Minus} active={selectedTool === "line"} onClick={() => setSelectedTool("line")} title="Line" />
+            <ToolBtn icon={Square} active={selectedTool === "rect"} onClick={() => setSelectedTool("rect")} title="Rectangle" />
+            <ToolBtn icon={Circle} active={selectedTool === "circle"} onClick={() => setSelectedTool("circle")} title="Circle" />
+            <ToolBtn icon={Type} active={selectedTool === "text"} onClick={() => setSelectedTool("text")} title="Text" />
+            <ToolBtn icon={Eraser} active={selectedTool === "eraser"} onClick={() => setSelectedTool("eraser")} title="Eraser" />
 
-        <Sep />
+            <Sep />
 
-        {/* Color and Width */}
-        <div className="flex items-center gap-4 px-2 shrink-0">
-          <div className="flex items-center gap-2 border border-[var(--border-secondary)] p-1.5 rounded-lg bg-[var(--bg-primary)]">
-            {["#111111", "#e74c3c", "#3498db", "#2ecc71", "#f1c40f"].map(c => (
-              <button 
-                key={c} 
-                onClick={() => setCurrentColor(c)}
-                className={clsx(
-                  "w-6 h-6 rounded-full border flex items-center justify-center transition-transform",
-                  currentColor === c ? "border-[var(--text-primary)] scale-110 shadow-sm" : "border-transparent"
-                )} 
-              >
-                <div className="w-5 h-5 rounded-full" style={{ background: c }} />
-              </button>
-            ))}
-            <input 
-              type="color" 
-              value={currentColor} 
-              onChange={(e) => setCurrentColor(e.target.value)}
-              className="w-6 h-6 p-0 border-0 bg-transparent rounded cursor-pointer ml-1" 
+            {/* Color and Width */}
+            <div className="flex items-center gap-4 px-2 shrink-0">
+              <div className="flex items-center gap-2 border border-[var(--border-secondary)] p-1.5 rounded-lg bg-[var(--bg-primary)]">
+                {["#111111", "#e74c3c", "#3498db", "#2ecc71", "#f1c40f"].map(c => (
+                  <button 
+                    key={c} 
+                    onClick={() => setCurrentColor(c)}
+                    className={clsx(
+                      "w-6 h-6 rounded-full border flex items-center justify-center transition-transform",
+                      currentColor === c ? "border-[var(--text-primary)] scale-110 shadow-sm" : "border-transparent"
+                    )} 
+                  >
+                    <div className="w-5 h-5 rounded-full" style={{ background: c }} />
+                  </button>
+                ))}
+                <input 
+                  type="color" 
+                  value={currentColor} 
+                  onChange={(e) => setCurrentColor(e.target.value)}
+                  className="w-6 h-6 p-0 border-0 bg-transparent rounded cursor-pointer ml-1" 
+                />
+              </div>
+              
+              <div className="flex items-center gap-3 border border-[var(--border-secondary)] px-4 py-2 rounded-lg bg-[var(--bg-primary)] min-w-[160px]">
+                <span className="text-[var(--text-secondary)] text-[12px] font-medium w-5 text-center">{currentWidth}</span>
+                <input 
+                  type="range" min="1" max="50" 
+                  value={currentWidth} 
+                  onChange={(e) => setCurrentWidth(parseInt(e.target.value))}
+                  className="w-28 accent-[var(--text-muted)]" 
+                />
+              </div>
+            </div>
+
+            <Sep />
+            
+            {/* Erase Board explicitly */}
+            <ToolBtn icon={Trash2} active={false} onClick={() => window.dispatchEvent(new Event('clear-board'))} title="Erase Board" color="text-[#e74c3c]" />
+          </>
+        )}
+
+        {title === "Collaborative Notebook" && (
+          <div className="flex items-center gap-2 ml-4">
+            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold mr-2">Export:</span>
+            <ToolBtn icon={FileDown} title="Export PDF" onClick={() => window.print()} />
+            <ToolBtn 
+              icon={Save} 
+              title="Export TXT" 
+              onClick={() => {
+                const text = document.querySelector('.ql-editor')?.textContent || '';
+                const blob = new Blob([text], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "notebook.txt";
+                a.click();
+              }} 
+            />
+            <ToolBtn 
+              icon={FolderOpen} 
+              title="Export DOC (Word)" 
+              onClick={() => {
+                const html = document.querySelector('.ql-editor')?.innerHTML || '';
+                const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>";
+                const footer = "</body></html>";
+                const sourceHTML = header + html + footer;
+                const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "notebook.doc";
+                a.click();
+              }} 
             />
           </div>
-          
-          <div className="flex items-center gap-3 border border-[var(--border-secondary)] px-4 py-2 rounded-lg bg-[var(--bg-primary)] min-w-[160px]">
-            <span className="text-[var(--text-secondary)] text-[12px] font-medium w-5 text-center">{currentWidth}</span>
-            <input 
-              type="range" min="1" max="50" 
-              value={currentWidth} 
-              onChange={(e) => setCurrentWidth(parseInt(e.target.value))}
-              className="w-28 accent-[var(--text-muted)]" 
-            />
-          </div>
-        </div>
-
-        <Sep />
-        
-        {/* Erase Board explicitly */}
-        <ToolBtn icon={Trash2} active={false} onClick={() => window.dispatchEvent(new Event('clear-board'))} title="Erase Board" color="text-[#e74c3c]" />
+        )}
       </div>
     </header>
   );

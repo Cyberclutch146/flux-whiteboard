@@ -1,0 +1,46 @@
+/* Notebook CSS Overrides */
+.notebook-override {
+  display: flex;
+  flex-direction: column;
+}
+
+.notebook-override .ql-toolbar {
+  border: none !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+  background: var(--bg-tertiary);
+  padding: 12px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.notebook-override .ql-container {
+  border: none !important;
+  flex: 1;
+  font-family: inherit;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+}
+
+.notebook-override .ql-editor {
+  padding: 2rem 4rem;
+  line-height: 1.7;
+}
+
+/* Dark mode specific tweaks for Quill's default icons */
+.dark .notebook-override .ql-stroke {
+  stroke: var(--text-primary);
+}
+.dark .notebook-override .ql-fill {
+  fill: var(--text-primary);
+}
+.dark .notebook-override .ql-picker {
+  color: var(--text-primary);
+}
+.dark .notebook-override .ql-picker-options {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-primary);
+}
+.dark .notebook-override .ql-snow .ql-picker.ql-expanded .ql-picker-label {
+  color: var(--text-primary);
+}

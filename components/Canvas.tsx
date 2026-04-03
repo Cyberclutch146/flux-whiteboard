@@ -130,20 +130,25 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
     };
   }, [addElement, panOffset, pushHistory, emitElement, emitClear]);
 
+  const commitText = () => {
+    if (editingText && editingText.text.trim()) {
+      const f = currentColor === "transparent" ? "#333333" : currentColor;
+      const el: WhiteboardElement = {
+        id: editingText.id, type: "text", x: editingText.x, y: editingText.y, width: 200, height: 50, rotation: 0,
+        opacity: 100, fill: f, stroke: "transparent", strokeWidth: 0, locked: false,
+        visible: true, label: "Text", text: editingText.text
+      };
+      addElement(el);
+      emitElement(el);
+      pushHistory();
+    }
+    setEditingText(null);
+  };
+
   const handlePointerDown = (e: any) => {
-    // If we're editing text and click away, commit it.
+    // If we click the stage while editing text, commit it.
     if (editingText) {
-      if (editingText.text.trim()) {
-        const el: WhiteboardElement = {
-          id: editingText.id, type: "text", x: editingText.x, y: editingText.y, width: 200, height: 50, rotation: 0,
-          opacity: 100, fill: currentColor, stroke: "transparent", strokeWidth: 0, locked: false,
-          visible: true, label: "Text", text: editingText.text
-        };
-        addElement(el);
-        emitElement(el);
-        pushHistory();
-      }
-      setEditingText(null);
+      commitText();
       return;
     }
 
@@ -329,10 +334,11 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
           }}
           value={editingText.text}
           onChange={(e) => setEditingText({ ...editingText, text: e.target.value })}
+          onBlur={commitText}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
-              handlePointerDown({ target: { getStage: () => ({ getPointerPosition: () => ({x: 0, y: 0}) })}, evt: {} });
+              commitText();
             }
           }}
         />

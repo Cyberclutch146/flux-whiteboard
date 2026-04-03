@@ -17,11 +17,17 @@ interface DashboardProps {
 
 export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, onSolo }: DashboardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [step, setStep] = useState<'mode' | 'lobby'>('mode');
   const [showJoin, setShowJoin] = useState(false);
   const [joinCode, setJoinCode] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   
-  const { theme, toggleTheme } = useBoardStore();
+  const { theme, toggleTheme, setMode } = useBoardStore();
+
+  const handleSelectMode = (mode: 'board' | 'notebook') => {
+    setMode(mode);
+    setStep('lobby');
+  };
 
   const handleJoinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,10 +118,51 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
           />
         </div>
 
-        {/* Linear Action List */}
+        {/* Mode or Lobby Selection */}
         <div className="w-full px-4">
           <AnimatePresence mode="wait">
-            {!showJoin ? (
+            {step === 'mode' ? (
+              <motion.div
+                key="mode-selection"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="flex flex-col sm:flex-row items-stretch justify-center gap-6 w-full max-w-3xl mx-auto"
+              >
+                <button
+                  onClick={() => handleSelectMode('notebook')}
+                  className="group relative flex-1 flex flex-col items-start justify-between p-8 rounded-3xl border border-[var(--border-primary)] bg-[var(--bg-primary)] hover:border-blue-500/50 hover:bg-blue-500/5 transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 overflow-hidden text-left min-h-[220px]"
+                >
+                  <div className="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-500" />
+                  
+                  <div className="w-14 h-14 rounded-2xl bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-secondary)] group-hover:text-blue-500 group-hover:scale-110 transition-all duration-500 shadow-sm relative z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
+                  </div>
+                  
+                  <div className="relative z-10 mt-8">
+                    <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2 tracking-tight">Collaborative Notebook</h3>
+                    <p className="text-sm text-[var(--text-muted)] font-medium leading-relaxed">Structured dual-pane text editing for teams. Perfect for brainstorming and meeting notes.</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleSelectMode('board')}
+                  className="group relative flex-1 flex flex-col items-start justify-between p-8 rounded-3xl border border-[var(--border-primary)] bg-[#0d0d0d] hover:border-orange-500/50 transition-all duration-500 shadow-md hover:shadow-2xl hover:shadow-orange-500/20 overflow-hidden text-left min-h-[220px]"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[rgba(255,255,255,0.02)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute -right-8 -top-8 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-500/20 transition-all duration-500" />
+                  
+                  <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#1a1a1a] border border-[#333] flex items-center justify-center text-white group-hover:text-orange-400 group-hover:scale-110 transition-all duration-500 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
+                  </div>
+                  
+                  <div className="relative z-10 mt-8">
+                    <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Spatial Whiteboard</h3>
+                    <p className="text-sm text-gray-400 font-medium leading-relaxed">Infinite spatial canvas for freeform drawing, mind-mapping, and architectural planning.</p>
+                  </div>
+                </button>
+              </motion.div>
+            ) : !showJoin ? (
               <motion.div
                 key="list"
                 initial={{ opacity: 0, scale: 0.98 }}
@@ -217,6 +264,13 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
               </motion.div>
             )}
           </AnimatePresence>
+          {step === 'lobby' && (
+            <div className="mt-6 flex justify-center">
+              <button onClick={() => setStep('mode')} className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
+                ← Back to Mode Selection
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
