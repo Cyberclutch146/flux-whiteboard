@@ -36,6 +36,7 @@ function Sep() {
 
 export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }: { roomId: string | null; user: any; title?: string; onBackToHome: () => void; onSignOut: () => void }) {
   const [copied, setCopied] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const { 
     selectedTool, setSelectedTool,
@@ -68,13 +69,26 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
           
           <div className="flex items-center h-full text-[var(--text-primary)] text-[13px] font-medium border-l border-[var(--border-secondary)] ml-2">
             {title ? (
-              <span className={`px-4 font-bold tracking-wide ${
-                title.includes('Notebook') 
-                ? 'bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm' 
-                : title.includes('Whiteboard')
-                ? 'bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-teal-600 drop-shadow-sm'
-                : 'text-[var(--text-primary)]'
-              }`}>
+              <span 
+                className={`px-4 font-bold tracking-wide cursor-pointer transition-transform active:scale-95 select-none ${
+                  title.includes('Notebook') 
+                  ? 'bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm' 
+                  : title.includes('Whiteboard')
+                  ? 'bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-teal-600 drop-shadow-sm'
+                  : 'text-[var(--text-primary)]'
+                }`}
+                onClick={() => {
+                  const newCount = clickCount + 1;
+                  setClickCount(newCount);
+                  if (newCount === 5) {
+                    alert("🐇 THE WHITE RABBIT HAS BEEN FOUND 🐇\nSYNQ SUPREME OVERRIDE ENABLED");
+                    document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                    document.body.style.transition = 'filter 1s ease-in-out';
+                    setTimeout(() => { document.body.style.filter = 'none'; }, 4000);
+                    setClickCount(0);
+                  }
+                }}
+              >
                 {title}
               </span>
             ) : roomId ? (

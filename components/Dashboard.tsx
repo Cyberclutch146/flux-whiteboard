@@ -34,6 +34,16 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
 
   const handleJoinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (joinCode.trim().toUpperCase() === 'BARREL7') {
+      document.body.style.transition = 'transform 2s ease-in-out';
+      document.body.style.transform = 'rotate(360deg)';
+      setTimeout(() => {
+        document.body.style.transition = 'none';
+        document.body.style.transform = 'rotate(0deg)';
+      }, 2000);
+      setJoinCode('');
+      return;
+    }
     if (joinCode.trim().length === 7) {
       onJoinRoom(joinCode.trim().toUpperCase());
     }
@@ -55,8 +65,8 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       />
 
       {/* Cinematic Animated Orbs */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" />
-      <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-[150px] pointer-events-none mix-blend-lighten" />
+      <div className="hidden md:block absolute -top-40 -left-40 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" />
+      <div className="hidden md:block absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-[150px] pointer-events-none mix-blend-lighten" />
 
       {/* Background ShapeGrid (Light Mode Only) */}
       {theme === 'light' && (
@@ -318,9 +328,12 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
                         whileTap={{ scale: joinCode.trim().length === 7 ? 0.98 : 1 }}
                         type="submit"
                         disabled={joinCode.trim().length !== 7}
-                        className="w-full py-5 bg-white text-black font-extrabold tracking-widest text-sm rounded-xl disabled:opacity-20 disabled:cursor-not-allowed flex justify-center items-center gap-3 hover:shadow-2xl hover:shadow-white/20 transition-all font-mono"
+                        className="w-full py-5 bg-white text-black font-extrabold tracking-[0.2em] text-sm rounded-xl disabled:opacity-20 disabled:cursor-not-allowed hover:shadow-2xl hover:shadow-white/20 transition-all font-mono"
                       >
-                        CONNECT <ArrowRight size={18} />
+                        <div className="w-full flex items-center justify-center gap-3">
+                          <span className="translate-x-1">CONNECT</span>
+                          <ArrowRight size={18} />
+                        </div>
                       </motion.button>
                     </form>
                   </div>
@@ -386,21 +399,21 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       </AnimatePresence>
 
       {/* Elegant Footer glass panel */}
-      <footer className="absolute bottom-6 left-0 right-0 z-50 px-8 lg:px-16 pointer-events-none drop-shadow-xl">
-        <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-[1400px] mx-auto gap-4 relative">
+      <footer className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-6 bg-[var(--bg-secondary)]/95 backdrop-blur-2xl border-t border-[var(--border-secondary)] md:bg-transparent md:border-none md:backdrop-blur-none md:absolute md:bottom-6 md:p-0 md:px-8 lg:px-16 pointer-events-none drop-shadow-2xl md:drop-shadow-xl rounded-t-3xl md:rounded-none">
+        <div className="flex flex-col md:flex-row justify-center md:justify-between items-center w-full max-w-[1400px] mx-auto gap-3 md:gap-4 relative">
           <div 
             onClick={() => setShowConnectPanel(true)}
-            className="text-[11px] font-bold tracking-[0.2em] uppercase text-[var(--text-muted)] pointer-events-auto hover:text-[var(--text-primary)] transition-colors cursor-pointer relative group flex items-center gap-2 bg-[var(--bg-primary)]/80 backdrop-blur-md px-5 py-3 rounded-full border border-[var(--border-primary)] shadow-sm hover:-translate-y-1"
+            className="hidden md:flex text-[10px] md:text-[11px] font-bold tracking-[0.15em] md:tracking-[0.2em] uppercase text-[var(--text-muted)] pointer-events-auto hover:text-[var(--text-primary)] transition-colors cursor-pointer relative group items-center gap-2 md:bg-[var(--bg-primary)]/80 md:backdrop-blur-md px-1 md:px-5 py-2 md:py-3 rounded-full md:border border-[var(--border-primary)] md:shadow-sm hover:-translate-y-1"
           >
             <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
             Designed by Swagata Ganguly
           </div>
           
-          <div className="flex items-center gap-3 pointer-events-auto bg-[var(--bg-primary)]/80 backdrop-blur-md px-5 py-3 rounded-full border border-[var(--border-primary)] shadow-md">
-            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://github.com/Cyberclutch146" target="_blank" rel="noreferrer" className="text-[var(--text-primary)] hover:text-gray-400 transition-all p-1.5"><Github size={22} strokeWidth={2}/></motion.a>
-            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://www.linkedin.com/in/swagata-ganguly-453aa6327/" target="_blank" rel="noreferrer" className="text-[#0a66c2] hover:text-[#004182] transition-all p-1.5"><Linkedin size={22} strokeWidth={2}/></motion.a>
-            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://www.instagram.com/undiagnosed.psycopath" target="_blank" rel="noreferrer" className="text-[#e1306c] hover:text-[#b01e4a] transition-all p-1.5"><Instagram size={22} strokeWidth={2}/></motion.a>
-            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://swagata-portfolio-amber.vercel.app" target="_blank" rel="noreferrer" className="text-[#2ecc71] hover:text-[#27ae60] transition-all p-1.5"><Globe size={22} strokeWidth={2}/></motion.a>
+          <div className="flex items-center justify-center gap-6 md:gap-3 pointer-events-auto md:bg-[var(--bg-primary)]/80 md:backdrop-blur-md px-1 md:px-5 py-3 md:py-3 rounded-full md:border border-[var(--border-primary)] md:shadow-md w-full md:w-auto">
+            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://github.com/Cyberclutch146" target="_blank" rel="noreferrer" className="text-[var(--text-primary)] hover:text-gray-400 transition-all"><Github size={22} strokeWidth={2}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://www.linkedin.com/in/swagata-ganguly-453aa6327/" target="_blank" rel="noreferrer" className="text-[#0a66c2] hover:text-[#004182] transition-all"><Linkedin size={22} strokeWidth={2}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://www.instagram.com/undiagnosed.psycopath" target="_blank" rel="noreferrer" className="text-[#e1306c] hover:text-[#b01e4a] transition-all"><Instagram size={22} strokeWidth={2}/></motion.a>
+            <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://swagata-portfolio-amber.vercel.app" target="_blank" rel="noreferrer" className="text-[#2ecc71] hover:text-[#27ae60] transition-all"><Globe size={22} strokeWidth={2}/></motion.a>
           </div>
         </div>
       </footer>
