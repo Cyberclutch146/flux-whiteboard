@@ -153,8 +153,10 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
             </div>
 
             {/* Mobile: Static fast text fallback */}
-            <div className="md:hidden w-full h-full flex flex-col justify-end pb-2 pl-2">
-              <h1 className="text-8xl sm:text-9xl font-black italic tracking-tighter text-[var(--text-primary)]" style={{ fontStretch: '125%' }}>SYNQ</h1>
+            <div className="block md:hidden h-full w-full">
+              <div className="w-full h-full flex flex-col justify-end pb-2 pl-2">
+                <h1 className="text-8xl sm:text-9xl font-black italic tracking-tighter text-[var(--text-primary)]" style={{ fontStretch: '125%' }}>SYNQ</h1>
+              </div>
             </div>
           </div>
           
