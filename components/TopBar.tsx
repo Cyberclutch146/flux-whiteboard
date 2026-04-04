@@ -3,7 +3,7 @@
 import {
   FileImage, FolderOpen, Save, FileDown,
   Undo2, Redo2,
-  MousePointer2, Pencil, Minus, Square, Circle, Type,
+  MousePointer2, Pencil, Minus, Square, Circle, Type, Hand,
   X, Plus, Eraser, Trash2, Sun, Moon, Home, LogOut, User, Copy, Check
 } from "lucide-react";
 import { useBoardStore } from "@/store/board";
@@ -223,6 +223,7 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
 
             {/* Draw Tools */}
             <ToolBtn icon={MousePointer2} active={selectedTool === "select"} onClick={() => setSelectedTool("select")} title="Select" />
+            <ToolBtn icon={Hand} active={selectedTool === "hand"} onClick={() => setSelectedTool("hand")} title="Pan/Move Screen" />
             <ToolBtn icon={Pencil} active={selectedTool === "pencil"} onClick={() => setSelectedTool("pencil")} title="Pencil" />
             <ToolBtn icon={Minus} active={selectedTool === "line"} onClick={() => setSelectedTool("line")} title="Line" />
             <ToolBtn icon={Square} active={selectedTool === "rect"} onClick={() => setSelectedTool("rect")} title="Rectangle" />

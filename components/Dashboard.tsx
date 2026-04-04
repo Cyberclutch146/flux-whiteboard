@@ -131,23 +131,31 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
         
         {/* Left Col: Expressive Typography Hero */}
         <div className="flex-1 flex flex-col items-start justify-center min-w-[300px] pt-12 lg:pt-0">
-          <div className="relative w-full overflow-visible h-[280px] pointer-events-auto mb-10">
+          <div className="relative w-full overflow-visible h-[140px] md:h-[280px] pointer-events-auto mb-6 md:mb-10">
             {/* The dramatic background glow for the title */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[150%] bg-white/5 dark:bg-white/10 blur-[80px] rounded-[100%] pointer-events-none" />
             
-            {/* @ts-ignore */}
-            <TextPressure
-              text="SYNQ"
-              flex
-              alpha={false}
-              stroke={false}
-              width
-              weight
-              italic
-              textColor="var(--text-primary)"
-              strokeColor="#5227FF"
-              minFontSize={120}
-            />
+            {/* Desktop: Interactive TextPressure */}
+            <div className="hidden md:block h-full w-full">
+              {/* @ts-ignore */}
+              <TextPressure
+                text="SYNQ"
+                flex
+                alpha={false}
+                stroke={false}
+                width
+                weight
+                italic
+                textColor="var(--text-primary)"
+                strokeColor="#5227FF"
+                minFontSize={120}
+              />
+            </div>
+
+            {/* Mobile: Static fast text fallback */}
+            <div className="md:hidden w-full h-full flex flex-col justify-end pb-2 pl-2">
+              <h1 className="text-8xl sm:text-9xl font-black italic tracking-tighter text-[var(--text-primary)]" style={{ fontStretch: '125%' }}>SYNQ</h1>
+            </div>
           </div>
           
           <div className="mt-8 ml-2 border-l-2 border-[var(--border-secondary)] pl-6 py-2">
@@ -399,17 +407,17 @@ export default function Dashboard({ user, onSignOut, onJoinRoom, onCreateRoom, o
       </AnimatePresence>
 
       {/* Elegant Footer glass panel */}
-      <footer className="relative mt-8 md:mt-0 w-full z-50 p-6 pb-8 bg-transparent border-none md:fixed md:bottom-6 md:left-0 md:right-0 md:p-0 md:px-8 lg:px-16 pointer-events-none">
-        <div className="flex flex-col md:flex-row justify-center md:justify-between items-center w-full max-w-[1400px] mx-auto gap-3 md:gap-4 relative">
+      <footer className="relative mt-auto w-full z-50 p-6 pb-8 bg-transparent border-none md:fixed md:bottom-6 md:left-0 md:right-0 md:p-0 md:px-8 lg:px-16 pointer-events-none">
+        <div className="flex flex-col-reverse md:flex-row justify-center md:justify-between items-center w-full max-w-[1400px] mx-auto gap-4 relative">
           <div 
             onClick={() => setShowConnectPanel(true)}
-            className="hidden md:flex text-[10px] md:text-[11px] font-bold tracking-[0.15em] md:tracking-[0.2em] uppercase text-[var(--text-muted)] pointer-events-auto hover:text-[var(--text-primary)] transition-colors cursor-pointer relative group items-center gap-2 md:bg-[var(--bg-primary)]/80 md:backdrop-blur-md px-1 md:px-5 py-2 md:py-3 rounded-full md:border border-[var(--border-primary)] md:shadow-sm hover:-translate-y-1"
+            className="flex text-[10px] md:text-[11px] font-bold tracking-[0.15em] md:tracking-[0.2em] uppercase text-[var(--text-muted)] pointer-events-auto hover:text-[var(--text-primary)] transition-colors cursor-pointer relative group items-center gap-2 bg-[var(--bg-primary)]/80 backdrop-blur-md px-5 py-3 rounded-full border border-[var(--border-primary)] shadow-sm hover:-translate-y-1"
           >
             <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
             Designed by Swagata Ganguly
           </div>
           
-          <div className="flex items-center justify-center gap-6 md:gap-3 pointer-events-auto md:bg-[var(--bg-primary)]/80 md:backdrop-blur-md px-1 md:px-5 py-3 md:py-3 rounded-full md:border border-[var(--border-primary)] md:shadow-md w-full md:w-auto">
+          <div className="flex items-center justify-center gap-6 pointer-events-auto bg-[var(--bg-primary)]/80 backdrop-blur-md px-6 py-3 rounded-full border border-[var(--border-primary)] shadow-md w-auto">
             <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://github.com/Cyberclutch146" target="_blank" rel="noreferrer" className="text-[var(--text-primary)] hover:text-gray-400 transition-all"><Github size={22} strokeWidth={2}/></motion.a>
             <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://www.linkedin.com/in/swagata-ganguly-453aa6327/" target="_blank" rel="noreferrer" className="text-[#0a66c2] hover:text-[#004182] transition-all"><Linkedin size={22} strokeWidth={2}/></motion.a>
             <motion.a whileHover={{ scale: 1.15, y: -3 }} href="https://www.instagram.com/undiagnosed.psycopath" target="_blank" rel="noreferrer" className="text-[#e1306c] hover:text-[#b01e4a] transition-all"><Instagram size={22} strokeWidth={2}/></motion.a>
