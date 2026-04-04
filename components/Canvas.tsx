@@ -166,6 +166,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
     }
 
     const pos = e.target.getStage().getPointerPosition();
+    if (!pos) return;
     const worldX = (pos.x - panOffset.x) / (zoom / 100);
     const worldY = (pos.y - panOffset.y) / (zoom / 100);
 
@@ -238,6 +239,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
 
   const handlePointerMove = (e: any) => {
     const pos = e.target.getStage().getPointerPosition();
+    if (!pos) return;
     
     if (isPanning.current) {
       const dx = pos.x - lastPanPos.current.x;
@@ -359,9 +361,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onTouchStart={handlePointerDown}
-        onTouchMove={handlePointerMove}
-        onTouchEnd={handlePointerUp}
+        onPointerCancel={handlePointerUp}
         ref={stageRef}
       >
         <Layer x={panOffset.x} y={panOffset.y} scaleX={scale} scaleY={scale}>
