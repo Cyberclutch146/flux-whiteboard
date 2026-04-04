@@ -20,7 +20,7 @@ function ToolBtn({ icon: Icon, active, onClick, title, color = "text-[var(--text
       title={title}
       className={clsx(
         "w-10 h-10 flex items-center justify-center rounded-lg transition-colors shrink-0",
-        active 
+        active
           ? activeColor
           : `${color} hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]`
       )}
@@ -38,7 +38,7 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
   const [copied, setCopied] = useState(false);
   const [clickCount, setClickCount] = useState(0);
   const [showExportMenu, setShowExportMenu] = useState(false);
-  const { 
+  const {
     selectedTool, setSelectedTool,
     undo, redo, historyIndex, historyLength,
     currentColor, setCurrentColor,
@@ -66,17 +66,16 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
           <button onClick={onBackToHome} className="h-8 px-3 rounded-md hover:bg-[var(--bg-secondary)] flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors ml-2">
             <Home size={16} /> <span className="text-sm font-medium">Home</span>
           </button>
-          
+
           <div className="flex items-center h-full text-[var(--text-primary)] text-[13px] font-medium border-l border-[var(--border-secondary)] ml-2">
             {title ? (
-              <span 
-                className={`px-4 font-bold tracking-wide cursor-pointer transition-transform active:scale-95 select-none ${
-                  title.includes('Notebook') 
-                  ? 'bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm' 
-                  : title.includes('Whiteboard')
-                  ? 'bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-teal-600 drop-shadow-sm'
-                  : 'text-[var(--text-primary)]'
-                }`}
+              <span
+                className={`px-4 font-bold tracking-wide cursor-pointer transition-transform active:scale-95 select-none ${title.includes('Notebook')
+                    ? 'bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm'
+                    : title.includes('Whiteboard')
+                      ? 'bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-teal-600 drop-shadow-sm'
+                      : 'text-[var(--text-primary)]'
+                  }`}
                 onClick={() => {
                   const newCount = clickCount + 1;
                   setClickCount(newCount);
@@ -92,7 +91,7 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
                 {title}
               </span>
             ) : roomId ? (
-              <button 
+              <button
                 onClick={handleCopyRoom}
                 className="flex items-center gap-2 px-4 hover:bg-[var(--bg-secondary)] h-full transition-colors group"
                 title="Copy Room ID"
@@ -104,7 +103,7 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
               <span className="px-4 text-[var(--text-muted)]">Solo Session</span>
             )}
             {title && roomId && (
-              <button 
+              <button
                 onClick={handleCopyRoom}
                 className="flex items-center gap-2 px-4 border-l border-[var(--border-secondary)] hover:bg-[var(--bg-secondary)] h-full transition-colors group"
                 title="Copy Room ID"
@@ -115,12 +114,12 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
             )}
           </div>
         </div>
-        
+
         <div className="ml-auto px-4 flex items-center gap-4">
-          
+
           {title === "Collaborative Notebook" && (
             <div className="flex items-center gap-2 mr-4">
-              <button 
+              <button
                 className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-secondary)] text-[var(--text-primary)] transition-all border border-[var(--border-primary)] shadow-sm hover:shadow"
                 onClick={() => {
                   window.print();
@@ -130,7 +129,7 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
                 <FileDown size={14} className="text-red-500" /> PDF
               </button>
 
-              <button 
+              <button
                 className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-secondary)] text-[var(--text-primary)] transition-all border border-[var(--border-primary)] shadow-sm hover:shadow"
                 onClick={() => {
                   const text = document.querySelector('.ql-editor')?.textContent || '';
@@ -146,7 +145,7 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
                 <Save size={14} className="text-orange-500" /> TXT
               </button>
 
-              <button 
+              <button
                 className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-secondary)] text-[var(--text-primary)] transition-all border border-[var(--border-primary)] shadow-sm hover:shadow"
                 onClick={() => {
                   const html = document.querySelector('.ql-editor')?.innerHTML || '';
@@ -170,12 +169,12 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
           <button onClick={toggleTheme} className="text-[var(--text-primary)] hover:scale-110 hover:text-blue-500 transition-all ml-1 mr-3" title="Toggle Theme">
             {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
           </button>
-          
+
           <div className="w-px h-6 bg-[var(--border-secondary)]" />
 
           {/* Sign Out Panel */}
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={onSignOut}
               className="text-[var(--text-secondary)] hover:text-[#e74c3c] transition-colors p-1 flex items-center justify-center bg-[var(--bg-secondary)] rounded-full w-8 h-8"
               title="Sign Out"
@@ -192,10 +191,10 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
           <>
             {/* File Tools */}
             <div className="relative">
-              <input 
-                type="file" 
-                accept="image/*" 
-                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" 
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                 title="Import Image"
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
@@ -237,38 +236,38 @@ export default function TopBar({ roomId, user, title, onBackToHome, onSignOut }:
             <div className="flex items-center gap-4 px-2 shrink-0">
               <div className="flex items-center gap-2 border border-[var(--border-secondary)] p-1.5 rounded-lg bg-[var(--bg-primary)]">
                 {["#111111", "#e74c3c", "#3498db", "#2ecc71", "#f1c40f"].map(c => (
-                  <button 
-                    key={c} 
+                  <button
+                    key={c}
                     onClick={() => setCurrentColor(c)}
                     className={clsx(
                       "w-6 h-6 rounded-full border flex items-center justify-center transition-transform",
                       currentColor === c ? "border-[var(--text-primary)] scale-110 shadow-sm" : "border-transparent"
-                    )} 
+                    )}
                   >
                     <div className="w-5 h-5 rounded-full" style={{ background: c }} />
                   </button>
                 ))}
-                <input 
-                  type="color" 
-                  value={currentColor} 
+                <input
+                  type="color"
+                  value={currentColor}
                   onChange={(e) => setCurrentColor(e.target.value)}
-                  className="w-6 h-6 p-0 border-0 bg-transparent rounded cursor-pointer ml-1" 
+                  className="w-6 h-6 p-0 border-0 bg-transparent rounded cursor-pointer ml-1"
                 />
               </div>
-              
+
               <div className="flex items-center gap-3 border border-[var(--border-secondary)] px-4 py-2 rounded-lg bg-[var(--bg-primary)] min-w-[160px]">
                 <span className="text-[var(--text-secondary)] text-[12px] font-medium w-5 text-center">{currentWidth}</span>
-                <input 
-                  type="range" min="1" max="50" 
-                  value={currentWidth} 
+                <input
+                  type="range" min="1" max="50"
+                  value={currentWidth}
                   onChange={(e) => setCurrentWidth(parseInt(e.target.value))}
-                  className="w-28 accent-[var(--text-muted)]" 
+                  className="w-28 accent-[var(--text-muted)]"
                 />
               </div>
             </div>
 
             <Sep />
-            
+
             {/* Erase Board explicitly */}
             <ToolBtn icon={Trash2} active={false} onClick={() => window.dispatchEvent(new Event('clear-board'))} title="Erase Board" color="text-[#e74c3c]" />
           </>

@@ -23,6 +23,14 @@ export function useMultiplayer(roomId: string | null, userId: string | null, use
       addElement(el);
     });
 
+    // Detect complete board wipes
+    const unsubRoomValue = onValue(roomRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        useBoardStore.getState().forceWipeBoard();
+        elementsRef.current = {};
+      }
+    });
+
     // 2. Sync Cursors
     const cursorsRef = ref(database, `rooms/${roomId}/cursors`);
     
