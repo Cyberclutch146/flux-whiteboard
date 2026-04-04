@@ -43,6 +43,14 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
 
   // Text Editing State
   const [editingText, setEditingText] = useState<{ id: string, x: number, y: number, text: string } | null>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (editingText && textAreaRef.current) {
+      // Small delay helps mobile browsers recognize the element before focusing
+      setTimeout(() => textAreaRef.current?.focus(), 50);
+    }
+  }, [editingText]);
 
   // Multiplayer Hook
   const { emitElement, otherCursors, emitClear } = useMultiplayer(roomId, user?.uid || null, user?.displayName || "Guest");
@@ -122,6 +130,8 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         yMap.set(k, v);
       }
       yElements?.push([yMap]);
+      emitElement(elProps as any);
+      if (!roomId) addElement(elProps as any);
       pushHistory();
     };
     window.addEventListener('import-image', handleImportImage);
@@ -153,6 +163,8 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
         yMap.set(k, v);
       }
       yElements?.push([yMap]);
+      emitElement(el);
+      if (!roomId) addElement(el);
       pushHistory();
     }
     setEditingText(null);
@@ -298,6 +310,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
       pushHistory();
       if (currentLine) {
         emitElement(currentLine);
+        if (!roomId) addElement(currentLine);
       }
       activeYMapRef.current = null;
       setCurrentLine(null);
@@ -394,6 +407,7 @@ export default function Canvas({ user, roomId }: { user: any; roomId: string | n
       {/* Floating Text Editor */}
       {editingText && (
         <textarea
+          ref={textAreaRef}
           autoFocus
           className="absolute bg-transparent border-none outline-none resize-none overflow-hidden m-0 p-0"
           style={{
